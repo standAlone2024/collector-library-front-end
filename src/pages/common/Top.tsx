@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import icon from '../../asserts/icons/login.png'; // 아이콘 파일 경로
 
 const MainContainer = styled.div`
     height : 100%;
@@ -35,7 +34,7 @@ const Top: React.FC = () => {
       <h1>Top Area</h1>
       <ChildContainer>
         <button onClick={handleButtonClick} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-          <Icon src={icon} alt="icon"/>
+          <Icon src={"/asserts/icons/login.png"} alt="icon"/>
         </button>
         login
       </ChildContainer>
