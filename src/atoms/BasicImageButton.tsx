@@ -49,7 +49,7 @@ export const BasicImageButton = <T,>({ background_color: background_color, label
   return (
     <Container $background_color={background_color} onClick={onClick} direction='row'>
         <Icon src={img_path} />
-        label
+        {label}
     </Container>
   );
 };

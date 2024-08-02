@@ -57,7 +57,7 @@ const Main: React.FC = () => {
           img_path='/asserts/icons/library_books.png'
         />
         <BasicInputTag
-          tag='테스트'
+          hint='테스트'
           // tag_color='brown'
         />
         <BasicLabel

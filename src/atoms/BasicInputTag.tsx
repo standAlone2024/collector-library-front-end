@@ -2,20 +2,20 @@ import React from 'react';
 import styled from 'styled-components';
 
 export interface BasicTagProps{
-  tag: string;
-  tag_color?: string;
+  hint?: string;
+  text_color?: string;
 }
 
-const Container = styled.input<{ tag_color?: string }>`
-  color: ${props => props.tag_color || 'black'};
+const Container = styled.input<{ text_color?: string }>`
+  color: ${props => props.text_color || 'black'};
 `;
 
-const BasicInputTag: React.FC<BasicTagProps> = ({ tag, tag_color }) => {
+const BasicInputTag: React.FC<BasicTagProps> = ({ hint, text_color }) => {
   return (
     <Container 
       type="text" /* input 요소의 타입 설정 */
-      value={tag}
-      tag_color={tag_color}
+      placeholder = {hint}
+      text_color={text_color}
     />
   );
 };

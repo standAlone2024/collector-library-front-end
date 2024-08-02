@@ -16,7 +16,7 @@ const StyledLabel = styled.p<{ font_color?: string, font_size?: number }>`
 const BasicLabel: React.FC<BasicLabelProps> = ({ description, font_size, font_color }) => {
   return (
     <StyledLabel font_color={font_color} font_size={font_size}>
-        description
+        {description}
     </StyledLabel>
   );
 };
