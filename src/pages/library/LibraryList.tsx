@@ -12,14 +12,6 @@ const Container = styled.div`
   width: 100%; 
 `;
 
-const ChildComponent = styled.div`
-  display: flex;
-  flex-direction: row;
-  background-color: lightblue;
-  padding: 20px;
-  border-radius: 10px;
-`;
-
 const thumbnails = [
     { img_url: '/asserts/icons/game_thumb.png', background_color: 'lightblue' },
     { img_url: '/asserts/icons/tv_thumb.png', background_color: 'lightpink' },

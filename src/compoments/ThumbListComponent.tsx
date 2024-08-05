@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import BasicThumbnail, { BasicThumbnail as BasicThumbnailProps } from '../atoms/BasicThumbnail'
-import BasicButton from '../atoms/BasicButton';
 
 const ThumbnailContainer = styled.div`
   display: flex;
