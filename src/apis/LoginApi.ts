@@ -3,6 +3,7 @@ import Cookies from 'universal-cookie';
 import moment from 'moment';
 import {CURRENT_HOMEPAGE_VERSION} from '../App';
 import {API_URL} from '../utils/constans';
+import { printLog } from '../utils/Utils';
 
 const cookie = new Cookies();
 
@@ -11,6 +12,43 @@ export interface IUserSession {
     accessToken?: string;
     refreshToken?: string;
     client_path?: string;
+}
+
+export const register = async(email: string, password: string) => {
+    
+    try{
+        const response = await axios.post(`${API_URL}/auth/register`, { email, password });
+        return response.data;
+    }catch (err) {
+        if (axios.isAxiosError(err)) {  
+            if (err.response) {
+                throw err.response;  
+            } else {
+                throw err;
+            }
+        } else {
+            throw new Error('An unknown error occurred');
+        }
+    }
+}
+
+export const login = async(email: string, password: string) => {
+    printLog(email + " " +  password);
+    try{
+        const response = await axios.post(`${API_URL}/auth/login`, { email, password });
+        printLog('response ' + response.data.token);
+        return response.data;
+    }catch (err) {
+        if (axios.isAxiosError(err)) {  
+            if (err.response) {
+                throw err.response;  
+            } else {
+                throw err;
+            }
+        } else {
+            throw new Error('An unknown error occurred');
+        }
+    }
 }
 
 export const postRefreshToken = async (param?: IUserSession): Promise<any> => {

@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import BasicButton from '../../atoms/BasicButton';
-import BasicImageButton from '../../atoms/BasicImageButton';
-import BasicLabel from '../../atoms/BasicLabel';
-import BasicInputTag from '../../atoms/BasicInputTag';
+import BasicButton from '../../Views/atoms/BasicButton';
+import BasicImageButton from '../../Views/atoms/BasicImageButton';
+import BasicLabel from '../../Views/atoms/BasicLabel';
+import BasicInputTag from '../../Views/atoms/BasicInputTag';
+import { login } from '../../apis/LoginApi';
+import { printLog } from '../../utils/Utils';
+import { LOG_LEVEL } from '../../utils/constans';
 
 const Container = styled.div`
   display: flex;
@@ -23,8 +26,20 @@ const ChildComponent = styled.div`
 `;
 
 const Login: React.FC = () => {
-  const handleClick = () => {
-    alert('Request Login!');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleClick = async() => {
+    try{
+      const data = await login(email, password);
+
+      localStorage.setItem('token', data.token);
+      //TODO mobx로 관리
+      //TODO 이 전 화면으로 보내는 코드를 작성해야 함
+    }catch(err)
+    {
+      printLog('Login failed '+ err , LOG_LEVEL.ERROR);
+    }
   };
   return (
     <Container>
@@ -34,6 +49,8 @@ const Login: React.FC = () => {
         />
         <BasicInputTag 
           hint={'이메일'}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
       </ChildComponent>
       <BasicLabel 
@@ -45,15 +62,31 @@ const Login: React.FC = () => {
         />
         <BasicInputTag 
           hint={'비밀번호'}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
       </ChildComponent>
       <BasicLabel 
         description='passwd validation resule'
       />
+      <ChildComponent>
+      <BasicButton
+        label='로그인'
+        background_color='green'
+        margin='0px 10px 0px 0px'
+        onClick={handleClick}
+      />
+      <BasicButton
+        label='비밀번호 찾기'
+        background_color='green'
+        // margin='10px 0px 0px 0px'
+        onClick={handleClick}
+      />  
+      </ChildComponent>
       <BasicButton
         label='가입'
         background_color='green'
-        // margin='10px 0px 0px 0px'
+        margin='10px 0px 0px 0px'
         onClick={handleClick}
       />
       <BasicImageButton

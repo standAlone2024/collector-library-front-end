@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-export interface BasicThumbnail{
+export interface BasicThumbnailProps{
     img_url: string;
     background_color?: string;
 }
@@ -20,7 +20,7 @@ const ThumbImg = styled.img`
     // background-color: red; //영역 확인용
 `;
 
-const BasicThumbnail: React.FC<BasicThumbnail> = ({ img_url, background_color}) => {
+const BasicThumbnail: React.FC<BasicThumbnailProps> = ({ img_url, background_color}) => {
   return (
     <StyleBack $background_color={background_color}>
         <ThumbImg src={img_url}/>

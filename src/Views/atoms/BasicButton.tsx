@@ -9,9 +9,9 @@ export interface BasicButtonProps<T = void> {
   onClick: () => T;
 }
 
-const StyledButton = styled.button<{ $background_color: string, margin?: string }>`
+const StyledButton = styled.button<{ $background_color: string, $margin?: string }>`
   padding: 10px 20px;
-  margin: ${props => props.margin || '0px'};
+  margin: ${props => props.$margin || '0px'};
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -32,7 +32,7 @@ const StyledButton = styled.button<{ $background_color: string, margin?: string 
 // 제네릭 타입을 사용하는 BasicButton 컴포넌트
 export const BasicButton = <T,>({ background_color: background_color, label, margin, onClick }: BasicButtonProps<T>): React.ReactElement => {
   return (
-    <StyledButton $background_color={background_color} margin={margin} onClick={onClick}>
+    <StyledButton $background_color={background_color} $margin={margin} onClick={onClick}>
       {label}
     </StyledButton>
   );

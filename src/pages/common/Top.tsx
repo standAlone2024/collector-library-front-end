@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
-import BasicLabel from '../../atoms/BasicLabel';
+import { useNavigate, useLocation } from 'react-router-dom';
+import BasicLabel from '../../Views/atoms/BasicLabel';
 
 const MainContainer = styled.div`
     height : 100%;
@@ -25,11 +25,28 @@ const Icon = styled.img`
 `;
 
 const Top: React.FC = () => {
+
+  // const location = useLocation();
   const navigate = useNavigate();
 
+  // let needMove = true;
+  // if(location.pathname === '/' || location.pathname.startsWith('/user'))
+  //   needMove = false;
+
+  // useEffect(() => {
+  //   if (!isLoggedIn && needMove) {
+  //     navigate('/user/login'); 
+  //   }
+  //   else
+  //   {
+  //     printLog('logined');
+  //   }
+  // }, [isLoggedIn, navigate]);
+  
   const handleButtonClick = () => {
-    navigate('/user/login'); // 이동하고자 하는 페이지 경로
+    navigate('/user/login'); 
   };
+
   return (
     <MainContainer style={{ background: '#ccc', padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <BasicLabel 
@@ -43,6 +60,6 @@ const Top: React.FC = () => {
       </ChildContainer>
     </MainContainer>
   );
-}
+};
 
 export default Top;

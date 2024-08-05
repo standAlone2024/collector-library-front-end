@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import BasicLabel from '../../atoms/BasicLabel';
-import BasicInputTag from '../../atoms/BasicInputTag';
-import BasicButton from '../../atoms/BasicButton';
+import BasicLabel from '../../Views/atoms/BasicLabel';
+import BasicInputTag from '../../Views/atoms/BasicInputTag';
+import BasicButton from '../../Views/atoms/BasicButton';
 
 const Container = styled.div`
   display: flex;
@@ -30,7 +30,11 @@ const FindPassWord: React.FC = () => {
             <BasicLabel description={'가입시 사용하신 이메일을 입력해 주세요'} />
             <ChildComponent>
                 <BasicLabel description={'이메일'} />
-                <BasicInputTag hint='이메일 입력 칸'/>
+                <BasicInputTag 
+                hint='이메일 입력 칸'
+                value=''
+                onChange={(e) => handleClick}
+                />
             </ChildComponent>
             <BasicButton background_color={'green'} label={'임시 비밀번호 발급'} onClick={handleClick} />
         </Container>

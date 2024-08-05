@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import BasicLabel from '../../atoms/BasicLabel';
-import BasicInputTag from '../../atoms/BasicInputTag';
-import BasicButton from '../../atoms/BasicButton';
-import BasicImageButton from '../../atoms/BasicImageButton';
+import BasicLabel from '../../Views/atoms/BasicLabel';
+import BasicInputTag from '../../Views/atoms/BasicInputTag';
+import BasicButton from '../../Views/atoms/BasicButton';
+import BasicImageButton from '../../Views/atoms/BasicImageButton';
 
 const Container = styled.div`
   display: flex;
@@ -30,12 +30,20 @@ const Join: React.FC = () => {
   <Container>
     <ChildComponent>
       <BasicLabel description={'이메일'}/>
-      <BasicInputTag hint='이메일'/>
+      <BasicInputTag 
+      hint='이메일'
+      value=''
+      onChange={(e) => handleClick}
+      />
     </ChildComponent>
     <BasicLabel description={'email validation result'} />
     <ChildComponent>
       <BasicLabel description={'비밀번호'}/>
-      <BasicInputTag hint='특수문자, 숫자, 영어를 합한 8자리 이상'/>
+      <BasicInputTag 
+      hint='특수문자, 숫자, 영어를 합한 8자리 이상'
+      value=''
+      onChange={(e) => handleClick}
+      />
     </ChildComponent>
     <BasicLabel description={'passwd validation result'} />
     <BasicButton

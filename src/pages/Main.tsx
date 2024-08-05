@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import BasicButton from '../atoms/BasicButton';
-import BasicImageButton from '../atoms/BasicImageButton';
-import BasicInputTag from '../atoms/BasicInputTag';
-import BasicLabel from '../atoms/BasicLabel';
-import BasicThumbnail from '../atoms/BasicThumbnail';
+import BasicButton from '../Views/atoms/BasicButton';
+import BasicImageButton from '../Views/atoms/BasicImageButton';
+import BasicInputTag from '../Views/atoms/BasicInputTag';
+import BasicLabel from '../Views/atoms/BasicLabel';
+import BasicThumbnail from '../Views/atoms/BasicThumbnail';
 import { DESCRIPTION_FONT_SML } from '../utils/constans';
 
 // Styled components 정의
@@ -59,6 +59,8 @@ const Main: React.FC = () => {
         <BasicInputTag
           hint='테스트'
           // tag_color='brown'
+          value=''
+          onChange={(e) => handleClick}
         />
         <BasicLabel
         description='테스트'

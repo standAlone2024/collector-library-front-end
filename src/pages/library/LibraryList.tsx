@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import BasicButton from '../../atoms/BasicButton';
-import ThumbListComponent from '../../compoments/ThumbListComponent';
-
+import BasicButton from '../../Views/atoms/BasicButton';
+import ThumbListComponent from '../../Views/compoments/ThumbListComponent';
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -19,6 +18,7 @@ const thumbnails = [
   ];
 
 const LibraryList: React.FC = () => {
+
     const handleAddLibrary = () => {
 
     };
@@ -28,6 +28,6 @@ const LibraryList: React.FC = () => {
             <BasicButton background_color={'green'} label={'Library 추가'} onClick={handleAddLibrary} />
         </Container>
     )
-}
+};
 
 export default LibraryList;

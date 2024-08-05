@@ -4,7 +4,7 @@ import Top from './pages/common/Top';
 import Bottom from './pages/common/Bottom';
 import Join from './pages/user/Join';
 import Login from './pages/user/Login';
-// import Main from './pages/Main';
+import Main from './pages/Main';
 import FindPassWord from './pages/user/FindPassWord';
 import LibraryList from './pages/library/LibraryList';
 
@@ -19,8 +19,8 @@ const App: React.FC = () => {
         </div>
         <div style={{ flex: '1 1 auto', overflow: 'auto' }}>
           <Routes>
-            {/* <Route path="/" element={<Main />} /> */}
-            <Route path="/" element={<LibraryList />} />
+            <Route path="/" element={<Main />} />
+            {/* <Route path="/" element={<Login />} /> */}
             <Route path="/user/login" element={<Login />} />
             <Route path="/user/join" element={<Join />} />
             <Route path="/user/findpw" element={<FindPassWord />} />
