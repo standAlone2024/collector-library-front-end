@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import BasicButton from '../../Views/atoms/BasicButton';
-import BasicImageButton from '../../Views/atoms/BasicImageButton';
-import BasicLabel from '../../Views/atoms/BasicLabel';
-import BasicInputTag from '../../Views/atoms/BasicInputTag';
-import { login } from '../../apis/LoginApi';
-import { printLog } from '../../utils/Utils';
-import { LOG_LEVEL } from '../../utils/constans';
+import BasicButton from '@/views/atoms/BasicButton';
+import BasicImageButton from '@/views/atoms/BasicImageButton';
+import BasicLabel from '@/views/atoms/BasicLabel';
+import BasicInputTag from '@/views/atoms/BasicInputTag';
+// import { login } from '../../apis/LoginApi';
+import { printLog } from '@util/Utils';
+import { LOG_LEVEL } from '@util/constans';
 
 const Container = styled.div`
   display: flex;
@@ -31,9 +31,9 @@ const Login: React.FC = () => {
 
   const handleClick = async() => {
     try{
-      const data = await login(email, password);
+      // const data = await login(email, password);
 
-      localStorage.setItem('token', data.token);
+      // localStorage.setItem('token', data.token);
       //TODO mobx로 관리
       //TODO 이 전 화면으로 보내는 코드를 작성해야 함
     }catch(err)
@@ -93,13 +93,13 @@ const Login: React.FC = () => {
         label='카카오 로그인'
         background_color='yellow'
         onClick={handleClick}
-        img_path='/asserts/icons/kko_logo.png'
+        img_path='/icons/kko_logo.png'
       />
       <BasicImageButton
         label='구글 로그인'
         background_color='white'
         onClick={handleClick}
-        img_path='/asserts/icons/google_logo.png'
+        img_path='/icons/google_logo.png'
       />
     </Container>
   );

@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import BasicLabel from '../../Views/atoms/BasicLabel';
-import BasicInputTag from '../../Views/atoms/BasicInputTag';
-import BasicButton from '../../Views/atoms/BasicButton';
+import BasicLabel from '@/views/atoms/BasicLabel';
+import BasicInputTag from '@/views/atoms/BasicInputTag';
+import BasicButton from '@/views/atoms/BasicButton';
 
 const Container = styled.div`
   display: flex;

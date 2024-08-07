@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import styled from 'styled-components';
-import { useNavigate, useLocation } from 'react-router-dom';
-import BasicLabel from '../../Views/atoms/BasicLabel';
+import { useRouter } from 'next/router';
+import BasicLabel from '../atoms/BasicLabel';
 
 const MainContainer = styled.div`
     height : 100%;
@@ -27,7 +27,7 @@ const Icon = styled.img`
 const Top: React.FC = () => {
 
   // const location = useLocation();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   // let needMove = true;
   // if(location.pathname === '/' || location.pathname.startsWith('/user'))
@@ -44,7 +44,7 @@ const Top: React.FC = () => {
   // }, [isLoggedIn, navigate]);
   
   const handleButtonClick = () => {
-    navigate('/user/login'); 
+    router.push('/user/login');
   };
 
   return (
@@ -54,7 +54,7 @@ const Top: React.FC = () => {
       />
       <ChildContainer>
         <button onClick={handleButtonClick} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-          <Icon src={"/asserts/icons/login.png"} alt="icon"/>
+          <Icon src={"/icons/login.png"} alt="icon"/>
         </button>
         login
       </ChildContainer>

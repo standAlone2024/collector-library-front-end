@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import BasicLabel from '../../Views/atoms/BasicLabel';
-import BasicInputTag from '../../Views/atoms/BasicInputTag';
-import BasicButton from '../../Views/atoms/BasicButton';
-import BasicImageButton from '../../Views/atoms/BasicImageButton';
+import BasicLabel from '@/views/atoms/BasicLabel';
+import BasicInputTag from '@/views/atoms/BasicInputTag';
+import BasicButton from '@/views/atoms/BasicButton';
+import BasicImageButton from '@/views/atoms/BasicImageButton';
 
 const Container = styled.div`
   display: flex;
@@ -56,13 +56,13 @@ const Join: React.FC = () => {
         label='카카오로 시작'
         background_color='yellow'
         onClick={handleClick}
-        img_path='/asserts/icons/kko_logo.png'
+        img_path='/icons/kko_logo.png'
       />
       <BasicImageButton
         label='구글로 시작'
         background_color='white'
         onClick={handleClick}
-        img_path='/asserts/icons/google_logo.png'
+        img_path='/icons/google_logo.png'
       />
   </Container>
   )

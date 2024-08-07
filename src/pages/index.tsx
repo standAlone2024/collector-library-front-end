@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import BasicButton from '../Views/atoms/BasicButton';
-import BasicImageButton from '../Views/atoms/BasicImageButton';
-import BasicInputTag from '../Views/atoms/BasicInputTag';
-import BasicLabel from '../Views/atoms/BasicLabel';
-import BasicThumbnail from '../Views/atoms/BasicThumbnail';
-import { DESCRIPTION_FONT_SML } from '../utils/constans';
+import BasicButton from '@view/atoms/BasicButton';
+import BasicImageButton from '@view/atoms/BasicImageButton';
+import BasicInputTag from '@view/atoms/BasicInputTag';
+import BasicLabel from '@view/atoms/BasicLabel';
+import BasicThumbnail from '@view/atoms/BasicThumbnail';
+import { DESCRIPTION_FONT_SML } from '@util/constans';
 
 // Styled components 정의
 const MainContainer = styled.div`
@@ -36,7 +36,7 @@ const Main: React.FC = () => {
         <ChildContainer>
             <p>내 컬렉션을 모두 기억하고 있나요?</p>
             <p>오늘 또 사신건 아니죠?</p>
-            <Icon src={"/asserts/icons/library_books.png"} alt="icon" />
+            <Icon src={"/icons/library_books.png"} alt="icon" />
             <p>이제 정리 한 번 하시죠!</p>
         </ChildContainer>
         <div style={{
@@ -54,7 +54,7 @@ const Main: React.FC = () => {
           background_color='yellow'
           label='카카오'
           onClick={handleClick}
-          img_path='/asserts/icons/library_books.png'
+          img_path='/icons/library_books.png'
         />
         <BasicInputTag
           hint='테스트'
@@ -68,7 +68,7 @@ const Main: React.FC = () => {
         font_size={DESCRIPTION_FONT_SML}
         />
         <BasicThumbnail
-        img_url='/asserts/icons/settings.png'
+        img_url='/icons/settings.png'
         />
         </div>
     </MainContainer>

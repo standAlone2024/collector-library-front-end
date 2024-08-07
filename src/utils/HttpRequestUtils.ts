@@ -1,9 +1,10 @@
 import axios from 'axios';
 import Cookie from 'universal-cookie';
-import {setCookieCSR, postRefreshToken, IUserSession} from '../apis/LoginApi';
-import {API_URL} from './constans';
-import {CURRENT_HOMEPAGE_VERSION} from '../App';
+import {setCookieCSR, postRefreshToken, IUserSession} from '@api/LoginApi';
+import {API_URL} from '@util/constans';
+import {CURRENT_HOMEPAGE_VERSION} from '@util/constans';
 
+//TODO refresh token을 구현해야 함
 const cookies = new Cookie();
 
 export const httpGetRequests = async <T>(pathname: string, session?: IUserSession): Promise<T> => {
@@ -158,8 +159,7 @@ export const setUserCookies = (status: number, session: IUserSession): void => {
 
 const getDefaultHeader = (session: IUserSession) => {
     let obj = {client_path: window.location.pathname};
-    // if (!IS_SERVER) {
-    //     obj = {client_path: window.location.pathname || ''};
+    
     return {
         Authorization: 'Bearer ' + (session.accessToken || ''),
         client_version: CURRENT_HOMEPAGE_VERSION,

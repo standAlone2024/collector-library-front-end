@@ -1,9 +1,9 @@
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import moment from 'moment';
-import {CURRENT_HOMEPAGE_VERSION} from '../App';
-import {API_URL} from '../utils/constans';
-import { printLog } from '../utils/Utils';
+import {CURRENT_HOMEPAGE_VERSION} from '@util/constans';
+import {API_URL} from '@util/constans';
+import { printLog } from '@util/Utils';
 
 const cookie = new Cookies();
 
@@ -17,7 +17,9 @@ export interface IUserSession {
 export const register = async(email: string, password: string) => {
     
     try{
-        const response = await axios.post(`${API_URL}/auth/register`, { email, password });
+        const response = await axios.post(`${API_URL}/login`, { email, password });
+        const token = response.data.token;
+        
         return response.data;
     }catch (err) {
         if (axios.isAxiosError(err)) {  

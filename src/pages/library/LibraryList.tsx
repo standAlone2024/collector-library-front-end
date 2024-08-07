@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import BasicButton from '../../Views/atoms/BasicButton';
-import ThumbListComponent from '../../Views/compoments/ThumbListComponent';
+import BasicButton from '@view/atoms/BasicButton';
+import ThumbListComponent from '@view/components/ThumbListComponent';
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -12,8 +12,8 @@ const Container = styled.div`
 `;
 
 const thumbnails = [
-    { img_url: '/asserts/icons/game_thumb.png', background_color: 'lightblue' },
-    { img_url: '/asserts/icons/tv_thumb.png', background_color: 'lightpink' },
+    { img_url: '/icons/game_thumb.png', background_color: 'lightblue' },
+    { img_url: '/icons/tv_thumb.png', background_color: 'lightpink' },
     // 필요한 만큼 추가
   ];
 

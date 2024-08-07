@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { BASIC_FONT_SIZE } from '../../utils/constans';
+import { BASIC_FONT_SIZE } from '@util/constans';
 
 export interface BasicLabelProps {
   description: string;
