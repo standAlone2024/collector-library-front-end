@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
-import BasicLabel from '../atoms/BasicLabel';
+import BasicLabel from '@view/atoms/BasicLabel';
 
 const MainContainer = styled.div`
     height : 100%;

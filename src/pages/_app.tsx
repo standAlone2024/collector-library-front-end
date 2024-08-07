@@ -4,7 +4,7 @@ import { createContext, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import authStore from '@store/authStore';
 import Top from '@view/templates/Top';
-import Bottom from '@/views/templates/Bottom';
+import Bottom from '@view/templates/Bottom';
 
 const stores = {
     authStore,

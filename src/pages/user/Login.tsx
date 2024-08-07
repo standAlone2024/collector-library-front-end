@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import BasicButton from '@/views/atoms/BasicButton';
-import BasicImageButton from '@/views/atoms/BasicImageButton';
-import BasicLabel from '@/views/atoms/BasicLabel';
-import BasicInputTag from '@/views/atoms/BasicInputTag';
+import BasicButton from '@view/atoms/BasicButton';
+import BasicImageButton from '@view/atoms/BasicImageButton';
+import BasicLabel from '@view/atoms/BasicLabel';
+import BasicInputTag from '@view/atoms/BasicInputTag';
 // import { login } from '../../apis/LoginApi';
 import { printLog } from '@util/Utils';
 import { LOG_LEVEL } from '@util/constans';

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import BasicButton from '@view/atoms/BasicButton';
-import ThumbListComponent from '@view/components/ThumbListComponent';
+import ThumbListComponent from '@view/compoments/ThumbListComponent';
 const Container = styled.div`
   display: flex;
   flex-direction: column;
