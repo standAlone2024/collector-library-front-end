@@ -1,9 +1,9 @@
 import React from 'react';
 import {MobXProviderContext} from 'mobx-react';
-export * from './authStore';
+// export * from './authStore'
 
-function useStores() {
-    return React.useContext(MobXProviderContext);
-}
+// function useStores() {
+//     return React.useContext(MobXProviderContext);
+// }
 
-export default useStores;
+// export default useStores;

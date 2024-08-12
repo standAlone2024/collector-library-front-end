@@ -2,15 +2,19 @@
 import type { AppProps } from 'next/app';
 import { createContext, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import authStore from '@store/authStore';
+import authStore from '@/stores/authStore';
 import Top from '@view/templates/Top';
 import Bottom from '@view/templates/Bottom';
+import axios from "axios";
+
+//FE, BE간 cookie를 주고 받을때 필요
+axios.defaults.withCredentials = true;
 
 const stores = {
     authStore,
 };
 
-const StoreContext = createContext(stores);
+export const StoreContext = createContext(stores);
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
     

@@ -1,46 +1,28 @@
 import { makeAutoObservable } from 'mobx';
-// import { login } from '../apis/LoginApi';
+import HttpRequests from '@/utils/HttpRequests';
 
 class AuthStore {
-    token: string | null = null;
-    message: string | null = null;
+    accessToken: string | null = null;
 
     constructor() {
         makeAutoObservable(this);
-        this.loadToken();
+        // this.loadToken();
+        this.setupTokenListener();
     }
 
-    setToken(token: string) {
-        if (typeof window === 'undefined')
-            return;
-        this.token = token;
-        localStorage.setItem('token', token);
+    setToken(accessToken: string) {
+        if (typeof window === 'undefined') return;
+        this.accessToken = accessToken;
     }
 
-    loadToken() {
-        if (typeof window === 'undefined')
-            return;
-        const token = localStorage.getItem('token');
-        if (token) {
-            this.token = token;
-        }
+    setupTokenListener() {
+        HttpRequests.getInstance().addTokenChangeListener((token) => {
+            this.setToken(token || '');
+        });
     }
-
-    // async fetchToken() {
-    //     // API 호출 예시 (실제 API URL과 메서드를 사용하세요)
-    //     const data = await login('aeca@naver.com', '1234');
-    //     console.log('token: ' + data.token);
-    //     if(data)
-    //     {
-    //         this.setToken(data.token);
-    //         console.log('set token');
-    //     }
-    //     else
-    //         console.error('Failed to fetch token');
-    // }
 
     get isAuthenticated() {
-        return !!this.token;
+        return !!this.accessToken;
     }
 }
 

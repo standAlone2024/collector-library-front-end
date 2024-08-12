@@ -1,7 +1,10 @@
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import BasicLabel from '@view/atoms/BasicLabel';
+import { observer } from 'mobx-react-lite';
+import { StoreContext } from '@page/_app';
+import { printLog } from '@/utils/Utils';
 
 const MainContainer = styled.div`
     height : 100%;
@@ -25,23 +28,14 @@ const Icon = styled.img`
 `;
 
 const Top: React.FC = () => {
-
-  // const location = useLocation();
+  const { authStore } = useContext(StoreContext);
+  const [isLogged, setIsLogged] = useState(false);
   const router = useRouter();
-
-  // let needMove = true;
-  // if(location.pathname === '/' || location.pathname.startsWith('/user'))
-  //   needMove = false;
-
-  // useEffect(() => {
-  //   if (!isLoggedIn && needMove) {
-  //     navigate('/user/login'); 
-  //   }
-  //   else
-  //   {
-  //     printLog('logined');
-  //   }
-  // }, [isLoggedIn, navigate]);
+  
+  useEffect(() => {
+    setIsLogged(authStore.isAuthenticated);
+    printLog('isLogged: ' + authStore.isAuthenticated);
+  }, [authStore.isAuthenticated]);
   
   const handleButtonClick = () => {
     router.push('/user/login');
@@ -52,14 +46,44 @@ const Top: React.FC = () => {
       <BasicLabel 
         description='여기가 화면 이름'
       />
-      <ChildContainer>
-        <button onClick={handleButtonClick} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-          <Icon src={"/icons/login.png"} alt="icon"/>
+      
+    <ChildContainer>
+      {isLogged ? (
+        <button 
+          onClick={handleButtonClick} 
+          style={{ 
+            background: 'none', 
+            border: 'none', 
+            cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            padding: '5px', 
+          }}
+        >
+          <Icon src={"/icons/logout.png"} alt="icon"/>
+          <span>logout</span>
         </button>
-        login
-      </ChildContainer>
+      ) : (
+        <button 
+          onClick={handleButtonClick} 
+          style={{ 
+            background: 'none', 
+            border: 'none', 
+            cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            padding: '5px', 
+          }}
+        >
+          <Icon src={"/icons/login.png"} alt="icon"/>
+          <span>login</span>
+        </button>
+      )}
+    </ChildContainer>
     </MainContainer>
   );
 };
 
-export default Top;
+export default observer(Top);
