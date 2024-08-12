@@ -1,9 +1,14 @@
-import React from 'react';
+import React, {useContext, useState, useEffect} from 'react';
+import Router from 'next/router';
 import styled from 'styled-components';
+import { observer } from 'mobx-react-lite';
 import BasicLabel from '@view/atoms/BasicLabel';
 import BasicInputTag from '@view/atoms/BasicInputTag';
 import BasicButton from '@view/atoms/BasicButton';
 import BasicImageButton from '@view/atoms/BasicImageButton';
+import { StoreContext } from '@page/_app';
+import { register } from '@/apis/LoginApi';
+import { printLog } from '@/utils/Utils';
 
 const Container = styled.div`
   display: flex;
@@ -23,17 +28,31 @@ const ChildComponent = styled.div`
 `;
 
 const Join: React.FC = () => {
-  const handleClick = () => {
-    alert('Request Join!');
+
+  const [email, setEmail] = useState('');
+  const [passwd, setPassword] = useState('');
+  const { authStore } = useContext(StoreContext);
+  const [isLogged, setIsLogged] = useState(false);
+
+  useEffect(() => {
+    setIsLogged(authStore.isAuthenticated);
+  }, [authStore.isAuthenticated]);
+
+  const handleClick = async() => {
+    printLog('가입 click');
+    const accessToken = await register(email, passwd);
+    authStore.setToken(accessToken);
+    Router.push('/library/LibraryList');
   };
   return (
   <Container>
+    {isLogged ? (<p>로그인 됨</p>) : (<p>로그인 안됨</p>)}
     <ChildComponent>
       <BasicLabel description={'이메일'}/>
       <BasicInputTag 
       hint='이메일'
-      value=''
-      onChange={(e) => handleClick}
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
       />
     </ChildComponent>
     <BasicLabel description={'email validation result'} />
@@ -41,8 +60,8 @@ const Join: React.FC = () => {
       <BasicLabel description={'비밀번호'}/>
       <BasicInputTag 
       hint='특수문자, 숫자, 영어를 합한 8자리 이상'
-      value=''
-      onChange={(e) => handleClick}
+      value={passwd}
+      onChange={(e) => setPassword(e.target.value)}
       />
     </ChildComponent>
     <BasicLabel description={'passwd validation result'} />
@@ -68,4 +87,4 @@ const Join: React.FC = () => {
   )
 }
 
-export default Join;
+export default observer(Join);

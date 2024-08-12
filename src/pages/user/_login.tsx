@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import Router from 'next/router';
 import styled from 'styled-components';
 import BasicButton from '@view/atoms/BasicButton';
 import BasicImageButton from '@view/atoms/BasicImageButton';
 import BasicLabel from '@view/atoms/BasicLabel';
 import BasicInputTag from '@view/atoms/BasicInputTag';
-// import { login } from '../../apis/LoginApi';
 import { printLog } from '@util/Utils';
 import { LOG_LEVEL } from '@util/constans';
+import { observer } from 'mobx-react-lite';
+import { StoreContext } from '@page/_app';
+import { login } from '@/apis/LoginApi';
 
 const Container = styled.div`
   display: flex;
@@ -27,20 +30,23 @@ const ChildComponent = styled.div`
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [passwd, setPassword] = useState('');
+  const { authStore } = useContext(StoreContext);
 
-  const handleClick = async() => {
+  const handleLogin = async() => {
     try{
-      // const data = await login(email, password);
-
-      // localStorage.setItem('token', data.token);
-      //TODO mobx로 관리
-      //TODO 이 전 화면으로 보내는 코드를 작성해야 함
+      printLog('로그인 click');
+      const accessToken = await login(email, passwd);
+      authStore.setToken(accessToken);
+      Router.push('/library/LibraryList');
     }catch(err)
     {
       printLog('Login failed '+ err , LOG_LEVEL.ERROR);
     }
   };
+  const handleMove = (path: string) => {
+    Router.push(path);
+  }
   return (
     <Container>
       <ChildComponent>
@@ -62,7 +68,7 @@ const Login: React.FC = () => {
         />
         <BasicInputTag 
           hint={'비밀번호'}
-          value={password}
+          value={passwd}
           onChange={(e) => setPassword(e.target.value)}
         />
       </ChildComponent>
@@ -74,35 +80,35 @@ const Login: React.FC = () => {
         label='로그인'
         background_color='green'
         margin='0px 10px 0px 0px'
-        onClick={handleClick}
+        onClick={handleLogin}
       />
       <BasicButton
         label='비밀번호 찾기'
         background_color='green'
         // margin='10px 0px 0px 0px'
-        onClick={handleClick}
+        onClick={() => handleMove('/user/find-password')}
       />  
       </ChildComponent>
       <BasicButton
         label='가입'
         background_color='green'
         margin='10px 0px 0px 0px'
-        onClick={handleClick}
+        onClick={() => handleMove('/user/join')}
       />
       <BasicImageButton
         label='카카오 로그인'
         background_color='yellow'
-        onClick={handleClick}
+        onClick={handleLogin}
         img_path='/icons/kko_logo.png'
       />
       <BasicImageButton
         label='구글 로그인'
         background_color='white'
-        onClick={handleClick}
+        onClick={handleLogin}
         img_path='/icons/google_logo.png'
       />
     </Container>
   );
 }
 
-export default Login;
+export default observer(Login);
