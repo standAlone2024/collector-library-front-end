@@ -8,3 +8,7 @@ export const IS_SERVICE                 = false;
 export const enum LOG_LEVEL {
     LOG, WARNING, ERROR
 }
+export const enum ROLE {
+    ADMIN = 1, 
+    USER
+}
