@@ -6,6 +6,9 @@ import authStore from '@/stores/authStore';
 import Top from '@view/templates/Top';
 import Bottom from '@view/templates/Bottom';
 import axios from "axios";
+import { LoadingProvider } from '@/views/contexts/LoadingContext';
+import LoadingOverlay from '@/views/compoments/LoadingOverlay';
+import { ErrorProvider } from '@/views/contexts/ErrorContext';
 
 //FE, BE간 cookie를 주고 받을때 필요
 axios.defaults.withCredentials = true;
@@ -24,9 +27,14 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
     return (
         <StoreContext.Provider value={stores}>
-            <Top />
-            <Component {...pageProps} />
-            <Bottom />
+            <ErrorProvider>
+                <LoadingProvider>
+                    <Top />
+                    <Component {...pageProps} />
+                    <Bottom />
+                    <LoadingOverlay />
+                </LoadingProvider>
+            </ErrorProvider>
         </StoreContext.Provider>
     );
 };
