@@ -1,6 +1,6 @@
 import { ROLE } from "@/utils/constans";
 
-export interface User {
+export interface IUser {
     id?: number;
     role: ROLE;
     email: string;

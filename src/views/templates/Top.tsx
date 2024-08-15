@@ -5,6 +5,8 @@ import BasicLabel from '@view/atoms/BasicLabel';
 import { observer } from 'mobx-react-lite';
 import { StoreContext } from '@page/_app';
 import { printLog } from '@/utils/Utils';
+import Router from 'next/router';
+// import { logout } from '@/apis/LoginApi';
 
 const MainContainer = styled.div`
     height : 100%;
@@ -38,8 +40,12 @@ const Top: React.FC = () => {
   }, [authStore.isAuthenticated]);
   
   const handleButtonClick = () => {
-    router.push('/user/login');
+    authStore.logout();
   };
+
+  const handleMove = (path: string) => {
+    Router.push(path);
+  }
 
   return (
     <MainContainer style={{ background: '#ccc', padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -66,7 +72,7 @@ const Top: React.FC = () => {
         </button>
       ) : (
         <button 
-          onClick={handleButtonClick} 
+          onClick={() => handleMove('/user/login')} 
           style={{ 
             background: 'none', 
             border: 'none', 

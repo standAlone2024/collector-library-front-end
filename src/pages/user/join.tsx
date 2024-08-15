@@ -8,7 +8,8 @@ import BasicButton from '@view/atoms/BasicButton';
 import BasicImageButton from '@view/atoms/BasicImageButton';
 import { StoreContext } from '@page/_app';
 import { register } from '@/apis/LoginApi';
-import { printLog } from '@/utils/Utils';
+import { useLoading } from '@view/contexts/LoadingContext';
+import { useError } from '@view/contexts/ErrorContext';
 
 const Container = styled.div`
   display: flex;
@@ -33,16 +34,30 @@ const Join: React.FC = () => {
   const [passwd, setPassword] = useState('');
   const { authStore } = useContext(StoreContext);
   const [isLogged, setIsLogged] = useState(false);
+  const { setIsLoading } = useLoading();
+  const { setErrorState } = useError();
 
   useEffect(() => {
     setIsLogged(authStore.isAuthenticated);
   }, [authStore.isAuthenticated]);
 
   const handleClick = async() => {
-    printLog('가입 click');
-    const accessToken = await register(email, passwd);
-    authStore.setToken(accessToken);
-    Router.push('/library/LibraryList');
+    setIsLoading(true);
+    try{
+      const auth = await register(email, passwd);
+      authStore.setAuth(auth.token, auth.user);
+      Router.push('/seciton/list');
+    }catch(err)
+    {
+      //타입 가드
+      if (err instanceof Error) {
+        setErrorState(err, 'Failed to fetch data. Please try again later.');
+      } else {
+        setErrorState(new Error('An unknown error occurred'), 'Failed to fetch data. Please try again later.');
+      }
+    }finally {
+      setIsLoading(false);
+    }
   };
   return (
   <Container>

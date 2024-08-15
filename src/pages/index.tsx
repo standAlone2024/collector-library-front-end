@@ -67,9 +67,9 @@ const Main: React.FC = () => {
         font_color='gray'
         font_size={DESCRIPTION_FONT_SML}
         />
-        <BasicThumbnail
+        {/* <BasicThumbnail
         img_url='/icons/settings.png'
-        />
+        /> */}
         </div>
     </MainContainer>
   );

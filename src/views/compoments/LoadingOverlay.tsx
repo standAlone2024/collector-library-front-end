@@ -1,21 +1,23 @@
 // components/LoadingOverlay.tsx
 import React from 'react';
+import styled from 'styled-components';
 import { Backdrop, CircularProgress } from '@mui/material';
-import { useLoading } from '@view/templates/LoadingContext';
+import { useLoading } from '@view/contexts/LoadingContext';
+
+const StyledBackdrop = styled(Backdrop)`
+  && {
+    color: #fff;
+    z-index: ${({ theme }) => theme.zIndex.drawer + 1};
+  }
+`;
 
 const LoadingOverlay: React.FC = () => {
   const { isLoading } = useLoading();
 
   return (
-    <Backdrop
-      sx={{
-        color: '#fff',
-        zIndex: (theme) => theme.zIndex.drawer + 1
-      }}
-      open={isLoading}
-    >
+    <StyledBackdrop open={isLoading}>
       <CircularProgress color="inherit" />
-    </Backdrop>
+    </StyledBackdrop>
   );
 };
 

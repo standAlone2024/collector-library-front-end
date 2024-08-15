@@ -21,7 +21,7 @@ const ThumbListComponent: React.FC<ThumbListComponentProps> = ({ thumbnails }) =
     <ThumbnailContainer>
       {thumbnails.map((thumbnail, index) => (
         <ThumbnailItem key={index}>
-          <BasicThumbnail img_url={thumbnail.img_url} background_color={thumbnail.background_color} />
+          <BasicThumbnail label={thumbnail.label} img_url={thumbnail.img_url} background_color={thumbnail.background_color} />
         </ThumbnailItem>
       ))}
     </ThumbnailContainer>

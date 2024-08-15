@@ -1,7 +1,27 @@
 import React from 'react';
-import { Modal, Box, Typography, Button } from '@mui/material';
+import styled from 'styled-components';
+import { Modal, Typography, Button } from '@mui/material';
 import { useError } from '../contexts/ErrorContext';
 import { handleError } from '@util/errorHandler';
+
+const StyledBox = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background-color: ${props => props.theme.palette.background.paper};
+  box-shadow: ${props => props.theme.shadows[24]};
+  padding: ${props => props.theme.spacing(4)};
+`;
+
+const StyledTypography = styled(Typography)`
+  margin-top: ${props => props.theme.spacing(2)};
+`;
+
+const StyledButton = styled(Button)`
+  margin-top: ${props => props.theme.spacing(2)};
+`;
 
 const ErrorModal: React.FC = () => {
   const { errorState, setErrorState } = useError();
@@ -22,26 +42,17 @@ const ErrorModal: React.FC = () => {
       aria-labelledby="error-modal-title"
       aria-describedby="error-modal-description"
     >
-      <Box sx={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        boxShadow: 24,
-        p: 4,
-      }}>
+      <StyledBox>
         <Typography id="error-modal-title" variant="h6" component="h2">
           An Error Occurred
         </Typography>
-        <Typography id="error-modal-description" sx={{ mt: 2 }}>
+        <StyledTypography id="error-modal-description">
           {message}
-        </Typography>
-        <Button onClick={handleClose} sx={{ mt: 2 }}>
+        </StyledTypography>
+        <StyledButton onClick={handleClose}>
           Close
-        </Button>
-      </Box>
+        </StyledButton>
+      </StyledBox>
     </Modal>
   );
 };

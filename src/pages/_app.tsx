@@ -1,4 +1,3 @@
-// pages/_app.tsx
 import type { AppProps } from 'next/app';
 import { createContext, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
@@ -6,9 +5,9 @@ import authStore from '@/stores/authStore';
 import Top from '@view/templates/Top';
 import Bottom from '@view/templates/Bottom';
 import axios from "axios";
-import { LoadingProvider } from '@/views/contexts/LoadingContext';
-import LoadingOverlay from '@/views/compoments/LoadingOverlay';
-import { ErrorProvider } from '@/views/contexts/ErrorContext';
+import { useRouter } from 'next/router';
+import { Providers } from '@/views/templates/Providers';
+import { printLog } from '@/utils/Utils';
 
 //FE, BE간 cookie를 주고 받을때 필요
 axios.defaults.withCredentials = true;
@@ -19,24 +18,37 @@ const stores = {
 
 export const StoreContext = createContext(stores);
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
-    
-    useEffect(() => {
-        //TODO 여기서 path나 scroll을 기억해 뒀다가 setting
-    }, []);
+
+export const useAuthCheck = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      if (router.pathname !== '/' && !(router.pathname.startsWith('/user'))) {
+        const isAuthenticated = await authStore.checkAndRefreshAuth();
+        if (!isAuthenticated) {
+          router.push('/');
+        printLog('refresh fail');
+        }
+      }
+    };
+
+    checkAuth();
+  }, [router.pathname]);
+};
+
+const MyApp = observer(({ Component, pageProps }: AppProps) => {
+    useAuthCheck();
 
     return (
         <StoreContext.Provider value={stores}>
-            <ErrorProvider>
-                <LoadingProvider>
-                    <Top />
-                    <Component {...pageProps} />
-                    <Bottom />
-                    <LoadingOverlay />
-                </LoadingProvider>
-            </ErrorProvider>
+            <Providers>
+                <Top />
+                <Component {...pageProps} />
+                <Bottom />
+            </Providers>
         </StoreContext.Provider>
     );
-};
+});
 
-export default observer(MyApp);
+export default MyApp;

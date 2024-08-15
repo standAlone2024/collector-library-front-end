@@ -1,12 +1,11 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import Router from 'next/router';
-import {API_URL, CURRENT_HOMEPAGE_VERSION} from '@util/constans';
+import { API_URL, CURRENT_HOMEPAGE_VERSION, AUTH_ERROR_CODE } from '@util/constans';
+import authStore from '@/stores/authStore';
 
 class HttpRequests {
   private static instance: HttpRequests;
   private axiosInstance: AxiosInstance;
   private accessToken: string | null = null;
-  private tokenChangeListeners: ((token: string | null) => void)[] = [];
 
   private constructor() {
     this.axiosInstance = axios.create({
@@ -16,10 +15,11 @@ class HttpRequests {
         'Content-Type': 'application/json',
         'X-Client-Version': CURRENT_HOMEPAGE_VERSION,
       },
-      withCredentials: true, // 쿠키를 포함하여 요청을 보내도록 설정
+      withCredentials: true,
     });
 
     this.setupInterceptors();
+    this.setupAuthStoreListener();
   }
 
   public static getInstance(): HttpRequests {
@@ -29,12 +29,10 @@ class HttpRequests {
     return HttpRequests.instance;
   }
 
-  public addTokenChangeListener(listener: (token: string | null) => void) {
-    this.tokenChangeListeners.push(listener);
-  }
-
-  private notifyTokenChange(token: string | null) {
-    this.tokenChangeListeners.forEach(listener => listener(token));
+  private setupAuthStoreListener() {
+    authStore.addListener((token) => {
+      this.accessToken = token;
+    });
   }
 
   private setupInterceptors(): void {
@@ -52,43 +50,29 @@ class HttpRequests {
     this.axiosInstance.interceptors.response.use(
       (response) => response,
       async (error) => {
-        if (error.response?.status === 401) {
+        const originalRequest = error.config;
+        if (error.response?.status === 401
+          && (error.response?.data?.error === AUTH_ERROR_CODE.REFRESH_TOKEN_MISSING 
+            || error.response?.data?.error === AUTH_ERROR_CODE.ACCESS_TOKEN_MISSING)
+        ) {
+          await authStore.logout();
+          return Promise.reject(error);
+        }
+        if (error.response?.status === 403 
+          && error.response?.data?.error === AUTH_ERROR_CODE.ACCESS_TOKEN_INVALID 
+          && !originalRequest._retry) {
+          originalRequest._retry = true;
           try {
-            await this.refreshToken('/auth/silent-refresh');
-            // 원래의 요청 재시도
-            const originalRequest = error.config;
+            await authStore.refreshToken();
             return this.axiosInstance(originalRequest);
           } catch (refreshError) {
-            // 리프레시 토큰도 만료된 경우 로그아웃 처리
-            this.logout();
+            await authStore.logout();
             return Promise.reject(refreshError);
           }
         }
         return Promise.reject(error);
       }
     );
-  }
-
-  private async refreshToken(path:string): Promise<void> {
-    try {
-      const response = await this.axiosInstance.post<{ accessToken: string }>('/auth/silent-refresh', {}, {
-        withCredentials: true
-      });
-      this.setAccessToken(response.data.accessToken);
-    } catch (error) {
-      console.error('Failed to refresh token:', error);
-      throw error;
-    }
-  }
-
-  private logout(): void {
-    this.accessToken = null;
-    Router.push('/login');
-  }
-
-  public setAccessToken(token: string): void {
-    this.accessToken = token;
-    this.notifyTokenChange(token);
   }
 
   public async get<T>(path: string, config?: AxiosRequestConfig): Promise<T> {

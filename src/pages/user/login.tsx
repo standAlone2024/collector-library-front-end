@@ -36,9 +36,9 @@ const Login: React.FC = () => {
   const handleLogin = async() => {
     try{
       printLog('로그인 click');
-      const accessToken = await login(email, passwd);
-      authStore.setToken(accessToken);
-      Router.push('/library/LibraryList');
+      const auth = await login(email, passwd);
+      if(auth)
+        Router.push('/section/list');
     }catch(err)
     {
       printLog('Login failed '+ err , LOG_LEVEL.ERROR);
