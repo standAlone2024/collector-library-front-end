@@ -23,7 +23,7 @@ const StyledButton = styled(Button)`
   margin-top: ${props => props.theme.spacing(2)};
 `;
 
-const ErrorModal: React.FC = () => {
+export const ErrorModal: React.FC = () => {
   const { errorState, setErrorState } = useError();
   const { error, message } = errorState;
 

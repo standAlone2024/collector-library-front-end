@@ -49,6 +49,7 @@ class AuthStore {
                 this.setAuth(null, null);
             }
             throw new Error('Token refresh failed: ' + error.message);
+            //TODO '잘못된 접근입니다.'라는 Modal 띄운 후 /로 redirection
         }
     }
 

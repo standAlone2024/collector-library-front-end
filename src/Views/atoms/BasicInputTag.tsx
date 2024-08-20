@@ -12,7 +12,7 @@ const Container = styled.input<{ text_color?: string }>`
   color: ${props => props.text_color || 'black'};
 `;
 
-const BasicInputTag: React.FC<BasicTagProps> = ({ value, onChange, hint, text_color }) => {
+export const BasicInputTag: React.FC<BasicTagProps> = ({ value, onChange, hint, text_color }) => {
   return (
     <Container 
       type="text" /* input 요소의 타입 설정 */

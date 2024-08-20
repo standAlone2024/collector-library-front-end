@@ -11,7 +11,7 @@ const StyledBackdrop = styled(Backdrop)`
   }
 `;
 
-const LoadingOverlay: React.FC = () => {
+export const LoadingOverlay: React.FC = () => {
   const { isLoading } = useLoading();
 
   return (

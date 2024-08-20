@@ -16,7 +16,7 @@ const StyledLabel = styled.p<{
   font-size: ${props => props.$font_size || BASIC_FONT_SIZE}px;
 `;
 
-const BasicLabel: React.FC<BasicLabelProps> = ({ description, font_size, font_color }) => {
+export const BasicLabel: React.FC<BasicLabelProps> = ({ description, font_size, font_color }) => {
   return (
     <StyledLabel $font_color={font_color} $font_size={font_size}>
         {description}

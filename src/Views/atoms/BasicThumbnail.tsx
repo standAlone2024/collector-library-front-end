@@ -24,7 +24,7 @@ const ThumbImg = styled.img`
     // background-color: red; //영역 확인용
 `;
 
-const BasicThumbnail: React.FC<BasicThumbnailProps> = ({ label, img_url, background_color}) => {
+export const BasicThumbnail: React.FC<BasicThumbnailProps> = ({ label, img_url, background_color}) => {
   return (
     <StyleBack $background_color={background_color}>
         <ThumbImg src={img_url}/>

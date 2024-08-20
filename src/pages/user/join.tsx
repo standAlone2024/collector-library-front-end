@@ -2,23 +2,10 @@ import React, {useContext, useState, useEffect} from 'react';
 import Router from 'next/router';
 import styled from 'styled-components';
 import { observer } from 'mobx-react-lite';
-import BasicLabel from '@view/atoms/BasicLabel';
-import BasicInputTag from '@view/atoms/BasicInputTag';
-import BasicButton from '@view/atoms/BasicButton';
-import BasicImageButton from '@view/atoms/BasicImageButton';
+import { BasicLabel, BasicInputTag, BasicButton, BasicImageButton, BasicContainer } from '@view/atoms';
 import { StoreContext } from '@page/_app';
 import { register } from '@/apis/LoginApi';
-import { useLoading } from '@view/contexts/LoadingContext';
-import { useError } from '@view/contexts/ErrorContext';
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%; 
-  width: 100%; 
-`;
+import { useLoading, useError } from '@view/contexts';
 
 const ChildComponent = styled.div`
   display: flex;
@@ -60,7 +47,7 @@ const Join: React.FC = () => {
     }
   };
   return (
-  <Container>
+    <BasicContainer isAlignCenter={true}>
     {isLogged ? (<p>로그인 됨</p>) : (<p>로그인 안됨</p>)}
     <ChildComponent>
       <BasicLabel description={'이메일'}/>
@@ -98,7 +85,7 @@ const Join: React.FC = () => {
         onClick={handleClick}
         img_path='/icons/google_logo.png'
       />
-  </Container>
+  </BasicContainer>
   )
 }
 

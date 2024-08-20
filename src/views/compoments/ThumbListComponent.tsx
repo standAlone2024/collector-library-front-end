@@ -16,7 +16,7 @@ interface ThumbListComponentProps {
   thumbnails: BasicThumbnailProps[];
 }
 
-const ThumbListComponent: React.FC<ThumbListComponentProps> = ({ thumbnails }) => {
+export const ThumbListComponent: React.FC<ThumbListComponentProps> = ({ thumbnails }) => {
   return (
     <ThumbnailContainer>
       {thumbnails.map((thumbnail, index) => (

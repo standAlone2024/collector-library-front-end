@@ -1,24 +1,12 @@
 import React, { useContext, useState } from 'react';
 import Router from 'next/router';
 import styled from 'styled-components';
-import BasicButton from '@view/atoms/BasicButton';
-import BasicImageButton from '@view/atoms/BasicImageButton';
-import BasicLabel from '@view/atoms/BasicLabel';
-import BasicInputTag from '@view/atoms/BasicInputTag';
+import { BasicButton, BasicImageButton, BasicLabel, BasicInputTag, BasicContainer } from '@view/atoms';
 import { printLog } from '@util/Utils';
 import { LOG_LEVEL } from '@util/constans';
 import { observer } from 'mobx-react-lite';
 import { StoreContext } from '@page/_app';
 import { login } from '@/apis/LoginApi';
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%; 
-  width: 100%; 
-`;
 
 const ChildComponent = styled.div`
   display: flex;
@@ -48,7 +36,7 @@ const Login: React.FC = () => {
     Router.push(path);
   }
   return (
-    <Container>
+    <BasicContainer isAlignCenter={true}>
       <ChildComponent>
         <BasicLabel 
           description={'email'}
@@ -107,7 +95,7 @@ const Login: React.FC = () => {
         onClick={handleLogin}
         img_path='/icons/google_logo.png'
       />
-    </Container>
+    </BasicContainer>
   );
 }
 
