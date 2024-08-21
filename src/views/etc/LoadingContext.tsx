@@ -1,4 +1,3 @@
-// contexts/LoadingContext.tsx
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
 interface LoadingContextType {

@@ -24,18 +24,19 @@ const List: React.FC = observer(() => {
   const [loading, setLoading] = useState(true);
 
   const fetchSections = useCallback(async () => {
-    try {
-      const sections = await getList(authStore.user?.id || 0);
-      if (sections) {
-        setThumbnails(sectionToThumb(sections));
+    if (!authStore.isLoading && authStore.user) {
+      try {
+        const sections = await getList(authStore.user.id);
+        if (sections) {
+          setThumbnails(sectionToThumb(sections));
+        }
+      } catch (error) {
+        console.error('Error fetching sections:', error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Error fetching sections:', error);
     }
-    finally {
-      setLoading(false);
-    }
-  }, [authStore.user?.id]);
+  }, []);
 
   const sectionToThumb = (sections: ISection[]):BasicThumbnailProps[] => {
     const thumbnailProps = sections.map((section: ISection): BasicThumbnailProps => ({
@@ -47,7 +48,14 @@ const List: React.FC = observer(() => {
   }
 
   useEffect(() => {
-    fetchSections();
+    const initializeAuth = async () => {
+      if (authStore.isLoading) {
+        await authStore.loadUser();
+      }
+      fetchSections();
+    };
+
+    initializeAuth();
   }, [fetchSections]);
 
   const handleAddLibrary = () => {

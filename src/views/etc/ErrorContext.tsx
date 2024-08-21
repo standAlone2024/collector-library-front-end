@@ -10,7 +10,7 @@ interface ErrorContextType {
   setErrorState: (error: Error | null, message?: string) => void;
 }
 
-const ErrorContext = createContext<ErrorContextType | undefined>(undefined);
+export const ErrorContext = createContext<ErrorContextType | undefined>(undefined);
 
 export const ErrorProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [errorState, setErrorStateInternal] = useState<ErrorState>({ error: null, message: '' });

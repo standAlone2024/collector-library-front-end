@@ -1,5 +1,5 @@
 import Router from 'next/router';
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import { IUser } from '@/apis/models/IUser';
 import { IAuth } from '@/apis/models/IAuth';
 import HttpRequests from '@/utils/HttpRequests';
@@ -8,6 +8,7 @@ import { AUTH_ERROR_CODE } from '@util/constans';
 class AuthStore {
     accessToken: string | null = null;
     user: IUser | null = null;
+    isLoading: boolean = true;
     private listeners: ((token: string | null) => void)[] = [];
 
     constructor() {
@@ -17,6 +18,7 @@ class AuthStore {
     setAuth(token: string | null, user: IUser | null) {
         this.accessToken = token;
         this.user = user;
+        this.isLoading = false;
         this.notifyListeners();
     }
 
@@ -30,6 +32,20 @@ class AuthStore {
 
     get isAuthenticated() {
         return !!this.accessToken && !!this.user;
+    }
+
+    async loadUser() {
+        this.isLoading = true;
+        try {
+            await this.refreshToken();
+        } catch (error) {
+            console.error('Failed to load user:', error);
+            throw error; // 에러를 상위로 전파
+        } finally {
+            runInAction(() => {
+                this.isLoading = false;
+            });
+        }
     }
 
     async refreshToken() {
@@ -49,7 +65,7 @@ class AuthStore {
                 this.setAuth(null, null);
             }
             throw new Error('Token refresh failed: ' + error.message);
-            //TODO '잘못된 접근입니다.'라는 Modal 띄운 후 /로 redirection
+            // throw error;
         }
     }
 

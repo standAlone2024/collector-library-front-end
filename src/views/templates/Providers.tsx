@@ -1,8 +1,9 @@
 import React from 'react';
 import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles';
 import { ThemeProvider as StyledComponentsProvider } from 'styled-components';
-import { ErrorProvider } from '@/views/contexts/ErrorContext';
-import { LoadingProvider } from '@/views/contexts/LoadingContext';
+import { ErrorProvider, LoadingProvider, ErrorBoundary, ErrorModal} from '@view/etc';
+import { AuthCheck } from '@view/compoments';
+// import { ErrorBoundary } from 'next/dist/client/components/error-boundary';
 
 const theme = createTheme(); // MUI 테마 생성
 
@@ -15,9 +16,13 @@ export const Providers: React.FC<ProvidersProps> = ({ children }) => {
     <MuiThemeProvider theme={theme}>
       <StyledComponentsProvider theme={theme}>
         <ErrorProvider>
-          <LoadingProvider>
-            {children}
-          </LoadingProvider>
+          <ErrorBoundary>
+            <AuthCheck />
+            <LoadingProvider>
+              {children}
+            </LoadingProvider>
+            <ErrorModal />
+          </ErrorBoundary>
         </ErrorProvider>
       </StyledComponentsProvider>
     </MuiThemeProvider>

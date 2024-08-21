@@ -5,8 +5,9 @@ import authStore from '@/stores/authStore';
 import {Top, Bottom } from '@view/templates';
 import axios from "axios";
 import { useRouter } from 'next/router';
-import { Providers } from '@/views/templates/Providers';
-import { printLog } from '@/utils/Utils';
+import { Providers } from '@view/templates/Providers';
+import { printLog } from '@util/Utils';
+import { useError } from '@view/etc'
 
 //FE, BE간 cookie를 주고 받을때 필요
 axios.defaults.withCredentials = true;
@@ -18,26 +19,49 @@ const stores = {
 export const StoreContext = createContext(stores);
 
 
-export const useAuthCheck = () => {
-  const router = useRouter();
+// export const useAuthCheck = () => {
+  // const router = useRouter();
+  // const { setErrorState } = useError();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      if (router.pathname !== '/' && !(router.pathname.startsWith('/user'))) {
-        const isAuthenticated = await authStore.checkAndRefreshAuth();
-        if (!isAuthenticated) {
-          router.push('/');
-        printLog('refresh fail');
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const checkAuth = async () => {
+  //     if (router.pathname !== '/' && !(router.pathname.startsWith('/user'))) {
+  //       const isAuthenticated = await authStore.checkAndRefreshAuth();
+  //       if (!isAuthenticated) {
+  //         router.push('/');
+  //       printLog('refresh fail');
+  //       }
+  //     }
+  //   };
 
-    checkAuth();
-  }, [router.pathname]);
-};
+  //   checkAuth();
+  // }, [router, router.pathname]);
+
+//   useEffect(() => {
+//     const checkAuth = async () => {
+//       if (router.pathname !== '/' && !(router.pathname.startsWith('/user'))) {
+//         try {
+//           const isAuthenticated = await authStore.checkAndRefreshAuth();
+//           if (!isAuthenticated) {
+//             router.push('/');
+//             printLog('refresh fail');
+//           }
+//         } catch (error) {
+//           if (error instanceof Error) {
+//             setErrorState(error, 'Authentication failed. Please log in again.');
+//             router.push('/');
+//           }
+//         }
+//       }
+//     };
+
+//     checkAuth();
+//   }, [router, router.pathname, setErrorState]);
+// };
 
 const MyApp = observer(({ Component, pageProps }: AppProps) => {
-    useAuthCheck();
+
+    // useAuthCheck();
 
     return (
         <StoreContext.Provider value={stores}>

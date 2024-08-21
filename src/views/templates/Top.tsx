@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import styled from 'styled-components';
-import { useRouter } from 'next/router';
 import BasicLabel from '@view/atoms/BasicLabel';
 import { observer } from 'mobx-react-lite';
 import { StoreContext } from '@page/_app';
 import { printLog } from '@/utils/Utils';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 
 const TopContainer = styled.div`
   position: fixed;
@@ -32,15 +31,14 @@ const Icon = styled.img`
   height: 32px;
 `;
 
-export const Top: React.FC = () => {
+export const Top: React.FC = observer(() => {
   const { authStore } = useContext(StoreContext);
-  const [isLogged, setIsLogged] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    setIsLogged(authStore.isAuthenticated);
-    printLog('isLogged: ' + authStore.isAuthenticated);
-  }, [authStore.isAuthenticated]);
+    // printLog('isAuthenticated: ' + authStore.isAuthenticated);
+    // printLog('isLoading: ' + authStore.isLoading);
+  }, [authStore.isAuthenticated, authStore.isLoading]);
 
   const handleButtonClick = () => {
     authStore.logout();
@@ -50,11 +48,19 @@ export const Top: React.FC = () => {
     Router.push(path);
   };
 
+  if (router.pathname !== '/' && authStore.isLoading) {
+    return (
+      <TopContainer>
+        <BasicLabel description="Loading..." />
+      </TopContainer>
+    );
+  }
+
   return (
     <TopContainer>
       <BasicLabel description="여기가 화면 이름" />
       <ChildContainer>
-        {isLogged ? (
+        {authStore.isAuthenticated ? (
           <button
             onClick={handleButtonClick}
             style={{
@@ -90,6 +96,6 @@ export const Top: React.FC = () => {
       </ChildContainer>
     </TopContainer>
   );
-};
+});
 
-export default observer(Top);
+export default Top;

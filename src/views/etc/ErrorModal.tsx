@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Modal, Typography, Button } from '@mui/material';
-import { useError } from '../contexts/ErrorContext';
+import { useError } from '../etc/ErrorContext';
 import { handleError } from '@util/errorHandler';
 
 const StyledBox = styled.div`

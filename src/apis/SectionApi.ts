@@ -3,8 +3,8 @@ import { printLog } from '@util/Utils';
 import HttpRequests from '@/utils/HttpRequests';
 import { ISection } from './models/ISection';
 
-export const getList = async(userId: number) => {
-    if(!userId)
+export const getList = async(userId: number | undefined) => {
+    if(!userId || userId === undefined)
         return;
     try{
         const response = await HttpRequests.getInstance().get<{sections: ISection[]}>(`/section/${userId}`);
