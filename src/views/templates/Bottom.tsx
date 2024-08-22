@@ -1,17 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-// const BottomContainer = styled.div`
-//   position: absolute;
-//   bottom: 0;
-//   left: 0;
-//   right: 0;
-//   background-color: #ccc;
-//   padding: 1rem;
-//   display: flex;
-//   flex-direction: row;
-// `;
-
 const BottomContainer = styled.div`
   position: fixed;
   bottom: 0;

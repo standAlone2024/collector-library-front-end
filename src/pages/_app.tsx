@@ -1,11 +1,11 @@
 import type { AppProps } from 'next/app';
 import { createContext, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import authStore from '@/stores/authStore';
+import authStore from '@store/authStore';
 import {Top, Bottom } from '@view/templates';
 import axios from "axios";
 import { useRouter } from 'next/router';
-import { Providers } from '@view/templates/Providers';
+import { Providers } from '@view/templates';
 import { printLog } from '@util/Utils';
 import { useError } from '@view/etc'
 
