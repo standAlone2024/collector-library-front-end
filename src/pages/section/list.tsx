@@ -4,8 +4,10 @@ import authStore from '@/stores/authStore';
 import styled from 'styled-components';
 import { getList } from '@api/SectionApi';
 import { ISection } from '@model/ISection';
-import { BasicThumbnailProps } from '@/views/atoms';
-import { ThumbListComponent } from '@/views/compoments';
+import { BasicThumbnailProps } from '@view/atoms';
+import { ThumbListComponent } from '@view/compoments';
+import { ImageSelectorModal } from '@view/etc';
+import { printLog } from '@/utils/Utils';
 
 const Container = styled.div`
   display: flex;
@@ -21,7 +23,23 @@ const BasicButton = React.lazy(() => import('@view/atoms/BasicButton'));
 
 const List: React.FC = observer(() => {
   const [thumbnails, setThumbnails] = useState<BasicThumbnailProps[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // section list loading 중
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedImages, setSelectedImages] = useState<{ path: string; name: string }[]>([]);
+  const [additionalInfo, setAdditionalInfo] = useState('');
+
+  const handleOpenModal = () => setIsModalVisible(true);
+
+  const handleCancel = () => {
+    console.log('Modal cancelled');
+  };
+
+  const handleConfirm = (s3Path: string, inputValue: string) => {
+    //일단 새로고침하여 data를 다시 가져오도록
+    //TODO Mobx로 수정해야 함
+    window.location.reload();
+  };
 
   const fetchSections = useCallback(async () => {
     if (!authStore.isLoading && authStore.user) {
@@ -57,15 +75,12 @@ const List: React.FC = observer(() => {
 
     initializeAuth();
   }, [fetchSections]);
-
-  const handleAddLibrary = () => {
-    alert('추가 modal 생성 예정');
-  };
-
   return (
     <Container>
-      {authStore.user ? (
-        <p>Welcome, {authStore.user.email}</p>
+      {/* {authStore.user ? (
+        <>
+          <p>Welcome, {authStore.user.email}</p>
+        </>
       ) : (
         <p>Loading...</p>
       )}
@@ -76,7 +91,43 @@ const List: React.FC = observer(() => {
           <ThumbListComponent thumbnails={thumbnails} />
         </Suspense>
       )}
-      <BasicButton background_color={'green'} label={'Library 추가'} onClick={handleAddLibrary} />
+      <ImageSelectorModal
+        isVisible={isModalVisible}
+        setIsVisible={setIsModalVisible}
+        title="Section 추가"
+        userId={authStore.user.id}
+        sectionCount={thumbnails.length}
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />
+      <BasicButton background_color={'green'} label={'Library 추가'} onClick={handleOpenModal} /> */}
+
+      {authStore.user ? (
+        <>
+          <p>Welcome, {authStore.user.email}</p>
+          {loading ? (
+            <p>Loading sections...</p>
+          ) : (
+            <>
+              <Suspense fallback={<div>Loading button...</div>}>
+                <ThumbListComponent thumbnails={thumbnails} />
+              </Suspense>
+              <ImageSelectorModal
+                isVisible={isModalVisible}
+                setIsVisible={setIsModalVisible}
+                title="Section 추가"
+                userId={authStore.user.id}
+                sectionCount={thumbnails.length}
+                onConfirm={handleConfirm}
+                onCancel={handleCancel}
+              />
+              <BasicButton background_color={'green'} label={'Library 추가'} onClick={handleOpenModal} />
+            </>
+          )}
+        </>
+      ) : (
+        <p>Loading...</p>
+      )}
     </Container>
   );
 });

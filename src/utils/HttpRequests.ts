@@ -42,6 +42,13 @@ class HttpRequests {
           config.headers['Authorization'] = `Bearer ${this.accessToken}`;
         }
         config.headers['X-Client-Version'] = CURRENT_HOMEPAGE_VERSION;
+        
+        // FormData인 경우에만 Content-Type을 설정하지 않음
+        if (config.data instanceof FormData) {
+          delete config.headers['Content-Type'];
+        }else if (!config.headers['Content-Type']) {
+          config.headers['Content-Type'] = 'application/json';
+        }
         return config;
       },
       (error) => Promise.reject(error)
@@ -81,7 +88,24 @@ class HttpRequests {
   }
 
   public async post<T>(path: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.axiosInstance.post<T>(path, data, config);
+    let finalConfig: AxiosRequestConfig = { 
+      ...config,
+      headers: { ...config?.headers }  // config.headers가 undefined일 경우를 대비
+    };
+  
+    if (data instanceof FormData) {
+      // FormData의 경우 Content-Type을 설정하지 않음 (브라우저가 자동으로 설정)
+      if (finalConfig.headers) {
+        delete finalConfig.headers['Content-Type'];
+      }
+    } else {
+      // FormData가 아닌 경우, Content-Type이 설정되지 않았다면 기본값 설정
+      finalConfig.headers = finalConfig.headers || {};
+      if (!finalConfig.headers['Content-Type']) {
+        finalConfig.headers['Content-Type'] = 'application/json';
+      }
+    }
+    const response = await this.axiosInstance.post<T>(path, data, finalConfig);
     return response.data;
   }
 

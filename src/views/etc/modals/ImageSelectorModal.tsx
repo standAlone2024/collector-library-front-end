@@ -1,10 +1,14 @@
 import React, { useState, useCallback, useRef } from 'react';
 import styled from 'styled-components';
+import { createSection, uploadImage } from '@api/SectionApi';
+import { printLog } from '@/utils/Utils';
 
 interface ImageSelectorModalProps {
   isVisible: boolean;
   title: string;
-  onConfirm: (selectedImages: { path: string; name: string }[], inputValue: string) => void;
+  userId: number | undefined;
+  sectionCount: number;
+  onConfirm: (s3Path: string, inputValue: string) => void;
   onCancel: () => void;
   onDelete?: () => void;
   setIsVisible: (isVisible: boolean) => void;
@@ -26,6 +30,7 @@ const ModalContent = styled.div`
   background-color: white;
   padding: 20px;
   border-radius: 8px;
+  width: 30%;
   max-width: 80%;
   max-height: 80%;
   overflow-y: auto;
@@ -81,44 +86,71 @@ const ButtonContainer = styled.div`
   margin-top: 20px;
 `;
 
-const ImageSelectorModal: React.FC<ImageSelectorModalProps> = ({ 
+
+// const upload = async (file: File, userId: number): Promise<{ originalPath: string, thumbnailPath: string }> => {
+  
+//   const response = await uploadImage(file, userId);
+//   if (!response) {
+//     throw new Error('Image upload failed');
+//   }
+
+//   return response.json();
+// };
+
+export const ImageSelectorModal: React.FC<ImageSelectorModalProps> = ({ 
   isVisible, 
   title, 
+  userId,
+  sectionCount,
   onConfirm, 
   onCancel,
   onDelete,
   setIsVisible 
 }) => {
-  const [images, setImages] = useState<{ path: string; name: string }[]>([]);
-  const [selectedImages, setSelectedImages] = useState<{ path: string; name: string }[]>([]);
+  const [selectedImage, setSelectedImage] = useState<{ file: File, preview: string } | null>(null);
   const [inputValue, setInputValue] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      const newImages = Array.from(files).map(file => ({
-        path: URL.createObjectURL(file),
-        name: file.name
-      }));
-      setImages(prevImages => [...prevImages, ...newImages]);
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedImage({
+        file,
+        preview: URL.createObjectURL(file)
+      });
     }
   }, []);
 
-  const handleImageSelect = useCallback((image: { path: string; name: string }) => {
-    setSelectedImages(prev => {
-      const isAlreadySelected = prev.some(img => img.path === image.path);
-      if (isAlreadySelected) {
-        return prev.filter(img => img.path !== image.path);
-      } else {
-        return [...prev, image];
+  const handleConfirm = async () => {
+    try {
+      if (!selectedImage) {
+        throw new Error("이미지를 선택해주세요.");
       }
-    });
-  }, []);
 
-  const handleConfirm = () => {
-    onConfirm(selectedImages, inputValue);
-    setIsVisible(false);
+      if (userId) {
+        // 이미지 업로드 및 처리
+        const thumbnailPath = await uploadImage(selectedImage.file, userId);
+        if(thumbnailPath)
+        {
+          // BE call
+          await createSection({
+            user_id: userId,
+            order: (sectionCount + 1),
+            label: inputValue,
+            sec_thumb_path: thumbnailPath
+          });
+  
+          onConfirm(thumbnailPath, inputValue);
+        }
+        else
+          throw new Error("이미지 업로드 실패");
+      }
+
+      setIsVisible(false);
+    } catch (error) {
+      console.error("Section 생성 중 Error가 발생했습니다:", error);
+      // 에러 처리 로직
+    }
   };
 
   const handleCancel = () => {
@@ -142,37 +174,32 @@ const ImageSelectorModal: React.FC<ImageSelectorModalProps> = ({
     <ModalOverlay onClick={handleCancel}>
       <ModalContent onClick={e => e.stopPropagation()}>
         <h2>{title}</h2>
-        <Button onClick={handleButtonClick}>Choose Images</Button>
+        <Button onClick={handleButtonClick}>이미지 선택</Button>
         <FileInput
           type="file"
           accept="image/*"
-          multiple
           onChange={handleFileChange}
           ref={fileInputRef}
         />
-        <ThumbnailGrid>
-          {images.map((image, index) => (
+        {selectedImage && (
+          <ThumbnailGrid>
             <Thumbnail
-              key={index}
-              style={{ backgroundImage: `url(${image.path})` }}
-              onClick={() => handleImageSelect(image)}
-              selected={selectedImages.some(img => img.path === image.path)}
+              style={{ backgroundImage: `url(${selectedImage.preview})` }}
+              selected={true}
             />
-          ))}
-        </ThumbnailGrid>
+          </ThumbnailGrid>
+        )}
         <InputField
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Enter additional information"
+          placeholder="Section의 이름을 입력하세요"
         />
         <ButtonContainer>
           <Button onClick={handleConfirm}>확인</Button>
           <Button onClick={handleCancel}>취소</Button>
         </ButtonContainer>
-        {(onDelete) && (
-          <Button onClick={handleConfirm}>삭제</Button>
-        )}
+        { onDelete && <Button onClick={handleDelete}>삭제</Button> }
       </ModalContent>
     </ModalOverlay>
   );

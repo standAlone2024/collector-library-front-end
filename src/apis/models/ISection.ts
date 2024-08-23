@@ -4,5 +4,5 @@ export interface ISection {
     order: number;
     label: string;
     sec_thumb_path?: string;
-    date: Date;
+    date?: Date;
 }
