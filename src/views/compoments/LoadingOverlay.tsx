@@ -2,7 +2,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Backdrop, CircularProgress } from '@mui/material';
-import { useLoading } from '@/views/etc/LoadingContext';
+import { useLoading } from '@view/etc/LoadingContext';
 
 const StyledBackdrop = styled(Backdrop)`
   && {

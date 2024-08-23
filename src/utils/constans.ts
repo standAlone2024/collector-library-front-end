@@ -1,4 +1,4 @@
-export const CURRENT_HOMEPAGE_VERSION   = process.env.REACT_APP_VERSION;
+export const CURRENT_HOMEPAGE_VERSION   = process.env.NEXT_PUBLIC_VERSION;
 export const API_URL                    = 'http://localhost:3003';
 export const DESCRIPTION_FONT_BIG       = 20;
 export const DESCRIPTION_FONT_MID       = 16;
