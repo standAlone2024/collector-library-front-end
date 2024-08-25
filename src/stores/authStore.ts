@@ -1,9 +1,10 @@
 import Router from 'next/router';
 import { makeAutoObservable, runInAction } from 'mobx';
-import { IUser } from '@/apis/models/IUser';
-import { IAuth } from '@/apis/models/IAuth';
-import HttpRequests from '@/utils/HttpRequests';
+import { IUser } from '@api/models/IUser';
+import { IAuth } from '@api/models/IAuth';
+import HttpRequests from '@util/HttpRequests';
 import { AUTH_ERROR_CODE } from '@util/constans';
+import { printLog } from '@util/Utils';
 
 class AuthStore {
     accessToken: string | null = null;
@@ -39,7 +40,7 @@ class AuthStore {
         try {
             await this.refreshToken();
         } catch (error) {
-            console.error('Failed to load user:', error);
+            // console.log('Failed to load user:', error);
             throw error; // 에러를 상위로 전파
         } finally {
             runInAction(() => {
