@@ -2,14 +2,16 @@ import React, { useState, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import { createSection, uploadImage } from '@api/SectionApi';
 import { printLog } from '@util/Utils';
+import { ISection } from '@api/models/ISection';
 
-interface ImageSelectorModalProps {
+interface ImageUpdateDeleteProps {
   isVisible: boolean;
   title: string;
   userId: number | undefined;
-  sectionCount: number;
+  section: ISection | undefined;
   onConfirm: (s3Path: string, inputValue: string) => void;
   onCancel: () => void;
+  onDelete: () => void;
   setIsVisible: (isVisible: boolean) => void;
 }
 
@@ -85,17 +87,18 @@ const ButtonContainer = styled.div`
   margin-top: 20px;
 `;
 
-export const ImageSelectorModal: React.FC<ImageSelectorModalProps> = ({ 
+export const ImageUpdateDeleteModal: React.FC<ImageUpdateDeleteProps> = ({ 
   isVisible, 
   title, 
   userId,
-  sectionCount,
+  section,
   onConfirm, 
   onCancel,
+  onDelete,
   setIsVisible 
 }) => {
   const [selectedImage, setSelectedImage] = useState<{ file: File, preview: string } | null>(null);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState(section?.label);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,35 +111,17 @@ export const ImageSelectorModal: React.FC<ImageSelectorModalProps> = ({
     }
   }, []);
 
-  const handleConfirm = async () => {
+  const handleUpdate = async () => {
     try {
-      if (!selectedImage) {
-        throw new Error("이미지를 선택해주세요.");
-      }
-
       if (userId) {
-        // 이미지 업로드 및 처리
-        const thumbnailPath = await uploadImage(selectedImage.file, userId);
-        if(thumbnailPath)
-        {
-          // BE call
-          await createSection({
-            user_id: userId,
-            order: (sectionCount + 1),
-            label: inputValue,
-            sec_thumb_path: thumbnailPath
-          });
-  
-          onConfirm(thumbnailPath, inputValue);
-        }
-        else
-          throw new Error("이미지 업로드 실패");
+        //update api call
       }
-
-      setIsVisible(false);
     } catch (error) {
       console.error("Section 생성 중 Error가 발생했습니다:", error);
       // 에러 처리 로직
+    }
+    finally{
+      setIsVisible(false);
     }
   };
 
@@ -146,8 +131,13 @@ export const ImageSelectorModal: React.FC<ImageSelectorModalProps> = ({
   };
 
   const handleButtonClick = () => {
-    fileInputRef.current?.click();
+    
   };
+
+  const handleDelete = () => {
+    onDelete();
+    setIsVisible(false);
+  }
 
   if (!isVisible) return null;
 
@@ -162,10 +152,14 @@ export const ImageSelectorModal: React.FC<ImageSelectorModalProps> = ({
           onChange={handleFileChange}
           ref={fileInputRef}
         />
-        {selectedImage && (
+        {(selectedImage || section?.sec_thumb_path) && (
           <ThumbnailGrid>
             <Thumbnail
-              style={{ backgroundImage: `url(${selectedImage.preview})` }}
+              style={{ 
+                backgroundImage: selectedImage?.preview 
+                  ? `url(${selectedImage.preview})` 
+                  : `${section?.sec_thumb_path}`
+              }}
               selected={true}
             />
           </ThumbnailGrid>
@@ -177,12 +171,13 @@ export const ImageSelectorModal: React.FC<ImageSelectorModalProps> = ({
           placeholder="Section의 이름을 입력하세요"
         />
         <ButtonContainer>
-          <Button onClick={handleConfirm}>확인</Button>
+          <Button onClick={handleUpdate}>변경</Button>
           <Button onClick={handleCancel}>취소</Button>
         </ButtonContainer>
+        <Button onClick={handleDelete}>삭제</Button>
       </ModalContent>
     </ModalOverlay>
   );
 };
 
-export default ImageSelectorModal;
+export default ImageUpdateDeleteModal;
