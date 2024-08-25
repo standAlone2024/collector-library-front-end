@@ -1,4 +1,4 @@
-import { IUser } from '@/apis/models/IUser';
+import { IUser } from '@api/models/IUser';
 
 export interface IAuth {
     token: string,

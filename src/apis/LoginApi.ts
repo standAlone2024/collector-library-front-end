@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { printLog } from '@util/Utils';
-import HttpRequests from '@/utils/HttpRequests';
-import { IAuth } from '@/apis/models/IAuth';
-import authStore from '@/stores/authStore';
+import HttpRequests from '@util/HttpRequests';
+import { IAuth } from '@api/models/IAuth';
+import authStore from '@store/authStore';
 
 export const register = async(email: string, password: string) => {
     try{

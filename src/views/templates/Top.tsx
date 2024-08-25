@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import BasicLabel from '@view/atoms/BasicLabel';
 import { observer } from 'mobx-react-lite';
 import { StoreContext } from '@page/_app';
-import { printLog } from '@/utils/Utils';
+import { printLog } from '@util/Utils';
 import Router, { useRouter } from 'next/router';
 
 const TopContainer = styled.div`

@@ -1,4 +1,3 @@
-// components/ErrorBoundary.tsx
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { ErrorContext } from './ErrorContext';
 
@@ -29,10 +28,8 @@ class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      // ErrorModal will handle the display
-      return null;
+      return <div>Something went wrong. Please try again later.</div>;
     }
-
     return this.props.children;
   }
 }

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react-lite';
 import { BasicLabel, BasicInputTag, BasicButton, BasicImageButton, BasicContainer } from '@view/atoms';
 import { StoreContext } from '@page/_app';
-import { register } from '@/apis/LoginApi';
+import { register } from '@api/LoginApi';
 import { useLoading, useError } from '@view/etc';
 
 const ChildComponent = styled.div`
