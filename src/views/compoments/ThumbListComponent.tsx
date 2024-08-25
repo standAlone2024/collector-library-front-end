@@ -14,6 +14,7 @@ const ThumbnailItem = styled.div`
 
 interface ThumbListComponentProps {
   thumbnails: BasicThumbnailProps[];
+  // onClick: () => void;
 }
 
 export const ThumbListComponent: React.FC<ThumbListComponentProps> = ({ thumbnails }) => {
@@ -21,7 +22,14 @@ export const ThumbListComponent: React.FC<ThumbListComponentProps> = ({ thumbnai
     <ThumbnailContainer>
       {thumbnails.map((thumbnail, index) => (
         <ThumbnailItem key={index}>
-          <BasicThumbnail label={thumbnail.label} img_url={thumbnail.img_url} background_color={thumbnail.background_color} />
+          <BasicThumbnail 
+            label={thumbnail.label} 
+            target_id={thumbnail.target_id}
+            menu_click_event={thumbnail.menu_click_event}
+            thumb_img_url={thumbnail.thumb_img_url} 
+            background_color={thumbnail.background_color}
+            move_to_where={thumbnail.move_to_where}
+            />
         </ThumbnailItem>
       ))}
     </ThumbnailContainer>

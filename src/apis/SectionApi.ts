@@ -1,15 +1,19 @@
 import axios from 'axios';
 import { printLog } from '@util/Utils';
-import HttpRequests from '@/utils/HttpRequests';
+import HttpRequests from '@util/HttpRequests';
 import { ISection } from './models/ISection';
+import sectionStore from '@store/sectionStore';
 
-export const getList = async(userId: number | undefined) => {
-    if(!userId || userId === undefined)
+export const fetchSectionList = async(userId: number | undefined) => {
+    if(!userId)
         return;
+    sectionStore.setLoading(true);
     try{
         const response = await HttpRequests.getInstance().get<{sections: ISection[]}>(`/section/${userId}`);
-        printLog(response.sections);
-        return response.sections;
+        const sections = response.sections;
+        printLog(sections);
+        sectionStore.setSections(sections);
+        // return response.sections;
     }catch(err){
         if (axios.isAxiosError(err)) {  
             if (err.response) {
@@ -21,6 +25,9 @@ export const getList = async(userId: number | undefined) => {
             printLog(err);
             throw new Error('An unknown error occurred');
         }
+    }
+    finally{
+        sectionStore.setLoading(false);
     }
 }
 
