@@ -24,6 +24,8 @@ const List: React.FC = observer(() => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
   const [isUDModalVisible, setIsUDModalVisible] = useState(false);
+  const [isUConfirmModalVisible, setIsUConfirmModalVisible] = useState(false);
+  const [isDConfirmModalVisible, setIsDConfirmModalVisible] = useState(false);
   const [selectedSectionId, setSelectedSectionId] = useState<number | null>(null);
   const [selectedSection, setSelectedSection] = useState<ISection | null>(null);
   const { setErrorState } = useError();
@@ -45,6 +47,18 @@ const List: React.FC = observer(() => {
     setSelectedSection(section);
     setIsConfirmModalVisible(true);
   };
+
+  const handleDelete = async(id: number) => {
+    setIsUDModalVisible(false);
+    setSelectedSectionId(id);
+    setIsDConfirmModalVisible(true);
+  };
+
+  const handleUpdate = async(section: ISection) => {
+    setIsUDModalVisible(false);
+    setSelectedSection(section);
+    setIsUConfirmModalVisible(true);
+  }
 
   const handleCreateConfirm = async() => {
     if(!selectedSection)
@@ -68,27 +82,27 @@ const List: React.FC = observer(() => {
       await updateSection(selectedSection);
     }catch(error){
       if (error instanceof Error) {
-        setErrorState(error, 'section 생성 중 오류가 발생했습니다.');
+        setErrorState(error, 'section 수정 중 오류가 발생했습니다.');
       } else {
         setErrorState(new Error('An unknown error occurred'));
       }
     }
-    setIsConfirmModalVisible(false);
+    setIsUConfirmModalVisible(false);
   }
 
   const handleDeleteConfirm = async() => {
-    if(!selectedSection)
+    if(!selectedSectionId)
       return;
     try{
-      await createSection(selectedSection);
+      await deleteSection(selectedSectionId)
     }catch(error){
       if (error instanceof Error) {
-        setErrorState(error, 'section 생성 중 오류가 발생했습니다.');
+        setErrorState(error, 'section 삭제 중 오류가 발생했습니다.');
       } else {
         setErrorState(new Error('An unknown error occurred'));
       }
     }
-    setIsConfirmModalVisible(false);
+    setIsDConfirmModalVisible(false);
   }
 
   const handleCancelConfirm = () => {
@@ -96,13 +110,15 @@ const List: React.FC = observer(() => {
     setIsModalVisible(true);
   }
 
-  // const handleUpdateConfirm = async(section: ISection) => {
-  //   await updateSection(section);
-  // };
+  const handleCancelUConfirm = () => {
+    setIsUConfirmModalVisible(false);
+    setIsUDModalVisible(true);
+  }
 
-  const handleDelete = async(id: number) => {
-    await deleteSection(id);
-  };
+  const handleCancelDConfirm = () => {
+    setIsDConfirmModalVisible(false);
+    setIsUDModalVisible(true);
+  }
 
   const handleMenu = useCallback((id: number) => {
     setSelectedSectionId(id);
@@ -161,17 +177,39 @@ const List: React.FC = observer(() => {
                 onCancel={handleCancelConfirm}
               />
               {selectedSectionId !== null && 
-                <ImageUpdateDeleteModal
-                  key={selectedSectionId}
-                  isVisible={isUDModalVisible}
-                  title="Section 설정"
-                  userId={authStore.user.id}
-                  section={sectionStore.getSection(selectedSectionId)}
-                  onConfirm={handleUpdateConfirm}
-                  onCancel={handleCancel}
-                  onDelete={handleDelete}
-                  setIsVisible={setIsUDModalVisible}
-                />
+                <>
+                  <ImageUpdateDeleteModal
+                    key={selectedSectionId}
+                    isVisible={isUDModalVisible}
+                    title="Section 설정"
+                    userId={authStore.user.id}
+                    section={sectionStore.getSection(selectedSectionId)}
+                    onConfirm={handleUpdate}
+                    onCancel={handleCancel}
+                    onDelete={handleDelete}
+                    setIsVisible={setIsUDModalVisible}
+                  />
+                  <ConfirmModal 
+                    isVisible={isUConfirmModalVisible}
+                    setIsVisible={setIsUConfirmModalVisible}
+                    title="Section 수정 확인"
+                    message="Section을 수정 하시겠습니까?"
+                    cancelName="취소"
+                    confirmName="수정"
+                    onConfirm={handleUpdateConfirm}
+                    onCancel={handleCancelUConfirm}
+                  />
+                  <ConfirmModal 
+                    isVisible={isDConfirmModalVisible}
+                    setIsVisible={setIsDConfirmModalVisible}
+                    title="Section 삭제 확인"
+                    message="Section을 삭제 하시겠습니까?"
+                    cancelName="취소"
+                    confirmName="삭제"
+                    onConfirm={handleDeleteConfirm}
+                    onCancel={handleCancelDConfirm}
+                  />
+                </>
               }
               <BasicButton background_color={'green'} label={'Library 추가'} onClick={handleOpenModal} />
             </>

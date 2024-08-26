@@ -147,7 +147,7 @@ export const ImageUpdateDeleteModal: React.FC<ImageUpdateDeleteProps> = ({
       return;
     printLog('id ' + id);
     onDelete(id);
-    setIsVisible(false);
+    // setIsVisible(false);
   }
 
   if (!isVisible) return null;
