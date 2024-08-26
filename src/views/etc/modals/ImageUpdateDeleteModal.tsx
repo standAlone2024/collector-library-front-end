@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 import styled from 'styled-components';
-import { createSection, uploadImage } from '@api/SectionApi';
+import { updateSection, uploadImage } from '@api/SectionApi';
 import { printLog } from '@util/Utils';
 import { ISection } from '@api/models/ISection';
 
@@ -9,9 +9,9 @@ interface ImageUpdateDeleteProps {
   title: string;
   userId: number | undefined;
   section: ISection | undefined;
-  onConfirm: (s3Path: string, inputValue: string) => void;
+  onConfirm: (section: ISection) => void;
   onCancel: () => void;
-  onDelete: () => void;
+  onDelete: (id: number) => void;
   setIsVisible: (isVisible: boolean) => void;
 }
 
@@ -111,16 +111,24 @@ export const ImageUpdateDeleteModal: React.FC<ImageUpdateDeleteProps> = ({
     }
   }, []);
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (section: ISection | undefined) => {
     try {
-      if (userId) {
-        //update api call
+      if(!section)
+        return;
+      let updatedSection = { ...section }; // 섹션의 복사본 생성
+      if(selectedImage && userId){
+        // 이미지 업로드 및 처리
+        const thumbnailPath = await uploadImage(selectedImage.file, userId);
+        if(thumbnailPath){
+          updatedSection.sec_thumb_path = thumbnailPath;
+        }
       }
+      updatedSection.label = inputValue as string;
+      onConfirm(updatedSection);
     } catch (error) {
-      console.error("Section 생성 중 Error가 발생했습니다:", error);
+      console.error("Section 업데이트 중 Error가 발생했습니다:", error);
       // 에러 처리 로직
-    }
-    finally{
+    } finally {
       setIsVisible(false);
     }
   };
@@ -131,15 +139,20 @@ export const ImageUpdateDeleteModal: React.FC<ImageUpdateDeleteProps> = ({
   };
 
   const handleButtonClick = () => {
-    
+    fileInputRef.current?.click();
   };
 
-  const handleDelete = () => {
-    onDelete();
+  const handleDelete = (id: number | undefined) => {
+    if(!id)
+      return;
+    printLog('id ' + id);
+    onDelete(id);
     setIsVisible(false);
   }
 
   if (!isVisible) return null;
+
+  printLog(section?.sec_thumb_path);
 
   return (
     <ModalOverlay onClick={handleCancel}>
@@ -158,7 +171,7 @@ export const ImageUpdateDeleteModal: React.FC<ImageUpdateDeleteProps> = ({
               style={{ 
                 backgroundImage: selectedImage?.preview 
                   ? `url(${selectedImage.preview})` 
-                  : `${section?.sec_thumb_path}`
+                  : `url(${section?.sec_thumb_path})`
               }}
               selected={true}
             />
@@ -171,10 +184,10 @@ export const ImageUpdateDeleteModal: React.FC<ImageUpdateDeleteProps> = ({
           placeholder="Section의 이름을 입력하세요"
         />
         <ButtonContainer>
-          <Button onClick={handleUpdate}>변경</Button>
+          <Button onClick={() => handleUpdate(section)}>변경</Button>
           <Button onClick={handleCancel}>취소</Button>
         </ButtonContainer>
-        <Button onClick={handleDelete}>삭제</Button>
+        <Button onClick={() => handleDelete(section?.id)}>삭제</Button>
       </ModalContent>
     </ModalOverlay>
   );

@@ -36,13 +36,48 @@ export const createSection = async(section : ISection) => {
         return;
     printLog('input section');
     printLog(section);
+    sectionStore.setLoading(true);
     try{
-        const response = await HttpRequests.getInstance().post<{message: string}>(`/section`, section);
-        printLog(response.message);
-        return response.message;
-    }catch(error)
-    {
+        const response = await HttpRequests.getInstance().post<{section: ISection}>(`/section`, section);
+        if(response.section)
+            sectionStore.addSection(response.section);
+        // return response.message;
+    }catch(error){
         throw error;
+    }finally{
+        sectionStore.setLoading(false);
+    }
+}
+
+export const updateSection = async(section: ISection) => {
+    if(!section)
+        return;
+    printLog(section);
+    sectionStore.setLoading(true);
+    try{
+        const response = await HttpRequests.getInstance().put<{section: ISection}>(`/section/${section.id}`, section);
+        if(response.section)
+            sectionStore.updateSection(response.section);
+    }catch(error){
+        throw error;
+    }finally{
+        sectionStore.setLoading(false);
+    }
+}
+
+export const deleteSection = async(id: number) => {
+    if(!id)
+        return;
+    printLog(id);
+    sectionStore.setLoading(true);
+    try{
+        const response = await HttpRequests.getInstance().delete<{message: string}>(`/section/${id}`);
+        if(response.message)
+            sectionStore.deleteSection(id);
+    }catch(error){
+        throw error;
+    }finally{
+        sectionStore.setLoading(false);
     }
 }
 

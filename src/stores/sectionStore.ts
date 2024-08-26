@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction, action } from 'mobx';
 import { ISection } from '@model/ISection';
 
 class SectionStore {
@@ -36,12 +36,12 @@ class SectionStore {
   }
 
   updateSection(updatedSection: ISection) {
-    const index = this.sections.findIndex(section => section.id === updatedSection.id);
-    if (index !== -1) {
-      runInAction(() => {
-        this.sections[index] = updatedSection;
+    runInAction(() => {
+      const index = this.sections.findIndex(section => section.id === updatedSection.id);
+      if (index !== -1) {
+          this.sections[index] = updatedSection;
+        };
       });
-    }
   }
 
   getSection(id: number) {
@@ -53,6 +53,12 @@ class SectionStore {
       this.sections = this.sections.filter(section => section.id !== id);
     });
   }
+
+  //강제 리랜더링
+  //sectionStore.triggerRerender();
+  triggerRerender = action(() => {
+    this.sections = [...this.sections];
+  });
 }
 
 const sectionStore = new SectionStore();

@@ -3,11 +3,12 @@ import { observer } from 'mobx-react-lite';
 import authStore from '@store/authStore';
 import sectionStore from '@store/sectionStore'
 import styled from 'styled-components';
-import { fetchSectionList } from '@api/SectionApi';
+import { fetchSectionList, deleteSection, updateSection } from '@api/SectionApi';
 import { BasicThumbnailProps, BasicButton } from '@view/atoms';
 import { ThumbListComponent } from '@view/compoments';
 import { ImageSelectorModal, ImageUpdateDeleteModal, useError } from '@view/etc';
 import { printLog } from '@util/Utils';
+import { ISection } from '@/apis/models/ISection';
 
 const Container = styled.div`
   display: flex;
@@ -31,28 +32,25 @@ const List: React.FC = observer(() => {
     console.log('Modal cancelled');
   };
 
-  const handleConfirm = (s3Path: string, inputValue: string) => {
-    //TODO: Implement confirm logic using sectionStore
-    window.location.reload();
+  const handleConfirm = (s3Path: string, inputValue: string) => {};
+
+  const handleUpdateConfirm = async(section: ISection) => {
+    await updateSection(section);
   };
 
-  const handleDelete = () => {
-    //TODO: Implement delete logic using sectionStore
-    window.location.reload();
+  const handleDelete = async(id: number) => {
+    await deleteSection(id);
   };
 
   const handleMenu = useCallback((id: number) => {
-    printLog("id: " + id);
     setSelectedSectionId(id);
     setIsUDModalVisible(true);
   }, []);
 
   useEffect(() => {
     const initAllData = async () => {
-      if (authStore.isLoading) {
-        printLog('list loadUser');
+      if (authStore.isLoading) 
         await authStore.loadUser();
-      }
       if (!authStore.isLoading && authStore.user)
         await fetchSectionList(authStore.user.id);
     };
@@ -97,7 +95,7 @@ const List: React.FC = observer(() => {
                   title="Section 설정"
                   userId={authStore.user.id}
                   section={sectionStore.getSection(selectedSectionId)}
-                  onConfirm={handleConfirm}
+                  onConfirm={handleUpdateConfirm}
                   onCancel={handleCancel}
                   onDelete={handleDelete}
                   setIsVisible={setIsUDModalVisible}
