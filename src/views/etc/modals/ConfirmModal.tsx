@@ -34,20 +34,25 @@ const CancelButton = styled(Button)`
 `;
 
 interface ConfirmModalProps {
+  isVisible: boolean;
   title: string;
   message: string;
+  cancelName: string;
+  confirmName: string;
   onConfirm: () => void;
   onCancel: () => void;
+  setIsVisible: (isVisible: boolean) => void;
 }
 
-const ConfirmModal: React.FC<ConfirmModalProps> = ({ title, message, onConfirm, onCancel }) => {
+export const ConfirmModal: React.FC<ConfirmModalProps> = ({ isVisible, title, message, cancelName, confirmName, onConfirm, onCancel }) => {
+  if (!isVisible) return null;
   return (
     <BaseModal onClose={onCancel}>
       <Title>{title}</Title>
       <Message>{message}</Message>
       <ButtonContainer>
-        <CancelButton onClick={onCancel}>Cancel</CancelButton>
-        <ConfirmButton onClick={onConfirm}>Confirm</ConfirmButton>
+        <CancelButton onClick={onCancel}>{cancelName}</CancelButton>
+        <ConfirmButton onClick={onConfirm}>{confirmName}</ConfirmButton>
       </ButtonContainer>
     </BaseModal>
   );

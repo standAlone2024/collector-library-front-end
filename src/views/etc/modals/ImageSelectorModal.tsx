@@ -8,7 +8,7 @@ interface ImageSelectorModalProps {
   title: string;
   userId: number | undefined;
   sectionCount: number;
-  onConfirm: (s3Path: string, inputValue: string) => void;
+  onConfirm: (s3Path: string, inputValue: string, user_id: number, order: number) => void;
   onCancel: () => void;
   setIsVisible: (isVisible: boolean) => void;
 }
@@ -125,22 +125,10 @@ export const ImageSelectorModal: React.FC<ImageSelectorModalProps> = ({
           else
             throw new Error("이미지 업로드 실패");
         }
-        const section = {
-          user_id: userId,
-          order: (sectionCount + 1),
-          label: inputValue,
-          sec_thumb_path: thumbnailPath,
-        }
-  
-        await createSection(section);
+        onConfirm(thumbnailPath, inputValue, userId, (sectionCount+1));
       }
-
-      onConfirm(thumbnailPath, inputValue);
-
-      setIsVisible(false);
     } catch (error) {
       console.error("Section 생성 중 Error가 발생했습니다:", error);
-      // 에러 처리 로직
     }
   };
 
@@ -181,8 +169,8 @@ export const ImageSelectorModal: React.FC<ImageSelectorModalProps> = ({
           placeholder="Section의 이름을 입력하세요"
         />
         <ButtonContainer>
-          <Button onClick={handleConfirm}>확인</Button>
           <Button onClick={handleCancel}>취소</Button>
+          <Button onClick={handleConfirm}>확인</Button>
         </ButtonContainer>
       </ModalContent>
     </ModalOverlay>

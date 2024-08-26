@@ -35,8 +35,8 @@ export const ModalFactory: React.FC<ModalProps> = (props) => {
   switch (props.type) {
     case 'alert':
       return <AlertModal {...props} />;
-    case 'confirm':
-      return <ConfirmModal {...props} />;
+    // case 'confirm':
+    //   return <ConfirmModal {...props} />;
     case 'input':
       return <InputModal {...props} />;
     default:

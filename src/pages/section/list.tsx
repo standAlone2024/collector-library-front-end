@@ -3,10 +3,10 @@ import { observer } from 'mobx-react-lite';
 import authStore from '@store/authStore';
 import sectionStore from '@store/sectionStore'
 import styled from 'styled-components';
-import { fetchSectionList, deleteSection, updateSection } from '@api/SectionApi';
+import { fetchSectionList, deleteSection, updateSection, createSection } from '@api/SectionApi';
 import { BasicThumbnailProps, BasicButton } from '@view/atoms';
 import { ThumbListComponent } from '@view/compoments';
-import { ImageSelectorModal, ImageUpdateDeleteModal, useError } from '@view/etc';
+import { ImageSelectorModal, ImageUpdateDeleteModal, ConfirmModal, useError } from '@view/etc';
 import { printLog } from '@util/Utils';
 import { ISection } from '@/apis/models/ISection';
 
@@ -22,8 +22,10 @@ const Container = styled.div`
 
 const List: React.FC = observer(() => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
   const [isUDModalVisible, setIsUDModalVisible] = useState(false);
   const [selectedSectionId, setSelectedSectionId] = useState<number | null>(null);
+  const [selectedSection, setSelectedSection] = useState<ISection | null>(null);
   const { setErrorState } = useError();
 
   const handleOpenModal = () => setIsModalVisible(true);
@@ -32,11 +34,71 @@ const List: React.FC = observer(() => {
     console.log('Modal cancelled');
   };
 
-  const handleConfirm = (s3Path: string, inputValue: string) => {};
-
-  const handleUpdateConfirm = async(section: ISection) => {
-    await updateSection(section);
+  const handleConfirm = (s3Path: string, inputValue: string, user_id: number, order: number) => {
+    setIsModalVisible(false);
+    const section = {
+      user_id,
+      order,
+      label: inputValue,
+      sec_thumb_path: s3Path,
+    }
+    setSelectedSection(section);
+    setIsConfirmModalVisible(true);
   };
+
+  const handleCreateConfirm = async() => {
+    if(!selectedSection)
+      return;
+    try{
+      await createSection(selectedSection);
+    }catch(error){
+      if (error instanceof Error) {
+        setErrorState(error, 'section 생성 중 오류가 발생했습니다.');
+      } else {
+        setErrorState(new Error('An unknown error occurred'));
+      }
+    }
+    setIsConfirmModalVisible(false);
+  }
+
+  const handleUpdateConfirm = async() => {
+    if(!selectedSection)
+      return;
+    try{
+      await updateSection(selectedSection);
+    }catch(error){
+      if (error instanceof Error) {
+        setErrorState(error, 'section 생성 중 오류가 발생했습니다.');
+      } else {
+        setErrorState(new Error('An unknown error occurred'));
+      }
+    }
+    setIsConfirmModalVisible(false);
+  }
+
+  const handleDeleteConfirm = async() => {
+    if(!selectedSection)
+      return;
+    try{
+      await createSection(selectedSection);
+    }catch(error){
+      if (error instanceof Error) {
+        setErrorState(error, 'section 생성 중 오류가 발생했습니다.');
+      } else {
+        setErrorState(new Error('An unknown error occurred'));
+      }
+    }
+    setIsConfirmModalVisible(false);
+  }
+
+  const handleCancelConfirm = () => {
+    setIsConfirmModalVisible(false);
+    setIsModalVisible(true);
+  }
+
+  // const handleUpdateConfirm = async(section: ISection) => {
+  //   await updateSection(section);
+  // };
 
   const handleDelete = async(id: number) => {
     await deleteSection(id);
@@ -87,6 +149,16 @@ const List: React.FC = observer(() => {
                 sectionCount={sectionStore.sections.length}
                 onConfirm={handleConfirm}
                 onCancel={handleCancel}
+              />
+              <ConfirmModal 
+                isVisible={isConfirmModalVisible}
+                setIsVisible={setIsConfirmModalVisible}
+                title="Section 추가 확인"
+                message="Section을 추가 하시겠습니까?"
+                cancelName="취소"
+                confirmName="확인"
+                onConfirm={handleCreateConfirm}
+                onCancel={handleCancelConfirm}
               />
               {selectedSectionId !== null && 
                 <ImageUpdateDeleteModal

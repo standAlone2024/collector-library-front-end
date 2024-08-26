@@ -184,8 +184,8 @@ export const ImageUpdateDeleteModal: React.FC<ImageUpdateDeleteProps> = ({
           placeholder="Section의 이름을 입력하세요"
         />
         <ButtonContainer>
-          <Button onClick={() => handleUpdate(section)}>변경</Button>
           <Button onClick={handleCancel}>취소</Button>
+          <Button onClick={() => handleUpdate(section)}>변경</Button>
         </ButtonContainer>
         <Button onClick={() => handleDelete(section?.id)}>삭제</Button>
       </ModalContent>
