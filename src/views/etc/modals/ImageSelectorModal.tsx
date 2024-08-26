@@ -110,28 +110,32 @@ export const ImageSelectorModal: React.FC<ImageSelectorModalProps> = ({
 
   const handleConfirm = async () => {
     try {
-      if (!selectedImage) {
-        throw new Error("이미지를 선택해주세요.");
+      if (!inputValue) {
+        throw new Error("Section 이름은 필수값입니다.");
       }
 
+      let thumbnailPath = '';
       if (userId) {
-        // 이미지 업로드 및 처리
-        const thumbnailPath = await uploadImage(selectedImage.file, userId);
-        if(thumbnailPath)
+      // 이미지 업로드 및 처리
+        if (selectedImage?.file)
         {
-          // BE call
-          await createSection({
-            user_id: userId,
-            order: (sectionCount + 1),
-            label: inputValue,
-            sec_thumb_path: thumbnailPath
-          });
-  
-          onConfirm(thumbnailPath, inputValue);
+          const _thumbnailPath = await uploadImage(selectedImage.file, userId);
+          if(_thumbnailPath)
+            thumbnailPath = _thumbnailPath;
+          else
+            throw new Error("이미지 업로드 실패");
         }
-        else
-          throw new Error("이미지 업로드 실패");
+        const section = {
+          user_id: userId,
+          order: (sectionCount + 1),
+          label: inputValue,
+          sec_thumb_path: thumbnailPath,
+        }
+  
+        await createSection(section);
       }
+
+      onConfirm(thumbnailPath, inputValue);
 
       setIsVisible(false);
     } catch (error) {

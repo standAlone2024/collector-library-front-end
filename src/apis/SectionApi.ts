@@ -11,9 +11,8 @@ export const fetchSectionList = async(userId: number | undefined) => {
     try{
         const response = await HttpRequests.getInstance().get<{sections: ISection[]}>(`/section/${userId}`);
         const sections = response.sections;
-        printLog(sections);
+        // printLog(sections);
         sectionStore.setSections(sections);
-        // return response.sections;
     }catch(err){
         if (axios.isAxiosError(err)) {  
             if (err.response) {
@@ -34,14 +33,13 @@ export const fetchSectionList = async(userId: number | undefined) => {
 export const createSection = async(section : ISection) => {
     if(!section || !section.user_id)
         return;
-    printLog('input section');
-    printLog(section);
+    // printLog('input section');
+    // printLog(section);
     sectionStore.setLoading(true);
     try{
         const response = await HttpRequests.getInstance().post<{section: ISection}>(`/section`, section);
         if(response.section)
             sectionStore.addSection(response.section);
-        // return response.message;
     }catch(error){
         throw error;
     }finally{
@@ -52,7 +50,7 @@ export const createSection = async(section : ISection) => {
 export const updateSection = async(section: ISection) => {
     if(!section)
         return;
-    printLog(section);
+    // printLog(section);
     sectionStore.setLoading(true);
     try{
         const response = await HttpRequests.getInstance().put<{section: ISection}>(`/section/${section.id}`, section);
@@ -68,7 +66,7 @@ export const updateSection = async(section: ISection) => {
 export const deleteSection = async(id: number) => {
     if(!id)
         return;
-    printLog(id);
+    // printLog(id);
     sectionStore.setLoading(true);
     try{
         const response = await HttpRequests.getInstance().delete<{message: string}>(`/section/${id}`);
