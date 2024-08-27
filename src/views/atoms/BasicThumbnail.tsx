@@ -63,7 +63,7 @@ export const BasicThumbnail: React.FC<BasicThumbnailProps> = ({ label, target_id
             <StyleBack 
                 $background_color={background_color}
                 onClick={() => handleMove(move_to_where)}>
-                <ThumbImg src={img_url}/>
+                <ThumbImg src={img_url ? img_url : '/icons/no_photography.png'}/>
                 <BottomArea>
                     <CenteredSpan>{label}</CenteredSpan>
                     <IconWrapper>

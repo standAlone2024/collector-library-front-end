@@ -23,6 +23,7 @@ export const ThumbListComponent: React.FC<ThumbListComponentProps> = ({ thumbnai
       {thumbnails.map((thumbnail, index) => (
         <ThumbnailItem key={index}>
           <BasicThumbnail 
+            key={index}
             label={thumbnail.label} 
             target_id={thumbnail.target_id}
             menu_click_event={thumbnail.menu_click_event}
