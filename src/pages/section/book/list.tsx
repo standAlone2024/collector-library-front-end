@@ -94,11 +94,11 @@ const LibraryBooks: React.FC = observer(() => {
                         <p>Loading sections...</p>
                     ) : (
                         <>
-                            {/* <SearchComponent 
+                            <SearchComponent 
                                 handleSearch={ handleSearch }
                                 move_path='/section/book/read'
                                 condition={Number.parseInt(sectionId as string)}
-                            /> */}
+                            />
                             <Suspense fallback={<div>Loading button...</div>}>
                                 <ThumbListComponent thumbnails={thumbnails} />
                             </Suspense>

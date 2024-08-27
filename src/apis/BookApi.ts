@@ -23,11 +23,12 @@ export const fetchBookList = async(sectionId: number | undefined) => {
 export const searchBooks = async(sectionId: number, keyword: string) => {
     if(!sectionId || !keyword)
         return;
+    printLog(sectionId, keyword);
     try {
-        const response = await HttpRequests.getInstance().get<{result: IBookResult[]}>
-        (`/section?section_id=${sectionId}&keyword=${keyword}`);
-        if(response.result)
-            return toSearchResult(response.result);
+        const response = await HttpRequests.getInstance().get<{books: IBookResult[]}>
+        (`/book?section_id=${sectionId}&keyword=${keyword}`);
+        if(response.books)
+            return toSearchResult(response.books);
     }catch(err) {
         throw err;
     }
@@ -42,6 +43,7 @@ const toSearchResult = (bookResult: IBookResult[]) => {
             thumb_path: book.book_thumb_path,
         });
     }));
+    printLog(rev.length);
     return rev;
 }
 export interface IBookResult {
