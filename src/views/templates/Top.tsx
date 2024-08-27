@@ -11,9 +11,9 @@ const TopContainer = styled.div`
   top: 0;
   left: 0;
   right: 0;
-  height: 5vh; // 전체 화면 높이의 15% 사용
+  height: 50px; 
   background-color: #ccc;
-  padding: 1rem;
+  padding: 0.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;

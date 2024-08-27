@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { API_URL, CURRENT_HOMEPAGE_VERSION, AUTH_ERROR_CODE } from '@util/constans';
-import authStore from '@store/authStore';
+import { authStore } from '@store';
 
 class HttpRequests {
   private static instance: HttpRequests;

@@ -1,9 +1,8 @@
 import type { AppProps } from 'next/app';
 import { createContext } from 'react';
 import { observer } from 'mobx-react-lite';
-import authStore from '@store/authStore';
-import sectionStore from '@store/sectionStore';
-import {Top, Bottom } from '@view/templates';
+import { authStore, sectionStore, bookStore } from '@store';
+import { Top, Bottom } from '@view/templates';
 import axios from "axios";
 import { Providers } from '@view/templates';
 
@@ -13,6 +12,7 @@ axios.defaults.withCredentials = true;
 const stores = {
     authStore,
     sectionStore,
+    bookStore,
 };
 
 export const StoreContext = createContext(stores);

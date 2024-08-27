@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { printLog } from '@util/Utils';
 import HttpRequests from '@util/HttpRequests';
-import { ISection } from './models/ISection';
-import sectionStore from '@store/sectionStore';
+import { ISection, SearchResult } from './models/ISection';
+import { sectionStore } from '@store';
 
 export const fetchSectionList = async(userId: number | undefined) => {
     if(!userId)
@@ -76,6 +76,18 @@ export const deleteSection = async(id: number) => {
         throw error;
     }finally{
         sectionStore.setLoading(false);
+    }
+}
+
+export const searchSection = async(keyword: string) => {
+    if(!keyword)
+        return;
+    try{
+        const response = await HttpRequests.getInstance().get<{result: SearchResult[]}>(`/section?keywork=${keyword}`)
+        if(response.result)
+            return response.result;
+    }catch(error){
+        throw error;
     }
 }
 

@@ -1,7 +1,6 @@
 import React, { Suspense, useState, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
-import authStore from '@store/authStore';
-import sectionStore from '@store/sectionStore'
+import { authStore, sectionStore } from '@store';
 import styled from 'styled-components';
 import { fetchSectionList, deleteSection, updateSection, createSection } from '@api/SectionApi';
 import { BasicThumbnailProps, BasicButton } from '@view/atoms';
@@ -11,13 +10,18 @@ import { printLog } from '@util/Utils';
 import { ISection } from '@/apis/models/ISection';
 
 const Container = styled.div`
+  position: absolute;
+  top: 55px; // Top 영역의 높이만큼 내림
+  left: 0;
+  right: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 'calc(100% - 64px)'; 
-  width: 100%; 
-  overflow: 'auto',
+  padding-top: 1rem; // Top 영역과의 여백 확보
+  margin: 0.5rem;
+  overflow: auto;
+  // background-color: red;
 `;
 
 const List: React.FC = observer(() => {

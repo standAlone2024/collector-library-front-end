@@ -1,7 +1,7 @@
 import { useEffect, useTransition } from 'react';
 import { useRouter } from 'next/router';
 import { useError } from '@view/etc';
-import authStore from '@store/authStore';
+import { authStore } from '@store';
 import { printLog } from '@util/Utils';
 
 export const AuthCheck: React.FC = () => {
