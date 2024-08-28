@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BasicButton, BasicThumbnailProps } from '@view/atoms';
 import { ThumbListComponent, SearchComponent } from '@view/compoments';
 import { observer } from 'mobx-react-lite';
