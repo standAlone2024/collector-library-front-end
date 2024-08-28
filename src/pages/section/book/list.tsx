@@ -53,7 +53,7 @@ const LibraryBooks: React.FC = observer(() => {
         };
 
         initAllData();
-    }, [router.isReady, router.query.sectionId, router, setErrorState]);
+    }, [router, router.isReady, router.query.sectionId, setErrorState]);
 
     const handleSearch = async (keyword: string, condition?: number) => {
         if(!condition) return;
