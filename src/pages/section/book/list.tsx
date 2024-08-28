@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { BasicButton, BasicThumbnailProps } from '@view/atoms';
 import { ThumbListComponent, SearchComponent } from '@view/compoments';
 import { observer } from 'mobx-react-lite';
@@ -7,71 +7,71 @@ import Router, { useRouter } from 'next/router';
 import { searchBooks, fetchBookList } from '@api/BookApi';
 import { authStore, bookStore } from '@store';
 import { useError } from '@view/etc';
-import { printLog } from '@/utils/Utils';
 
 const Container = styled.div`
   position: absolute;
-  top: 55px; // Top 영역의 높이만큼 내림
+  top: 55px;
   left: 0;
   right: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-top: 1rem; // Top 영역과의 여백 확보
+  padding-top: 1rem;
   margin: 0.5rem;
   overflow: auto;
-//   background-color: red;
 `;
-
-const handleMove = () => {
-    Router.push('/section/book/create');
-}
-
-const handleSearch = async(keyword: string, condition?: number) => {
-    if(!condition)
-        return;
-    return await searchBooks(condition, keyword);
-}
 
 const LibraryBooks: React.FC = observer(() => {
     const router = useRouter();
     const { setErrorState } = useError();
-    const { sectionId } = router.query;
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const initAllData = async() => {
-            if (!router.isReady) 
+        const initAllData = async () => {
+            if (!router.isReady) return;
+
+            const sectionId = router.query.sectionId;
+            if (!sectionId || Array.isArray(sectionId)) {
+                setErrorState(new Error("잘못된 접근입니다."), "잘못된 접근입니다.");
+                router.push('/section/list');
                 return;
-
-            if(authStore.isLoading)
-                await authStore.loadUser();
-
-            if(!authStore.isLoading && authStore.user)
-            {
-                if(!sectionId)
-                {
-                    setErrorState(new Error("잘못된 접근입니다."), "잘못된 접근입니다.");
-                    router.push('/section/list');
-                    return;                    
-                }
-                // printLog('sectionId: ' + sectionId);
-                try {
-                    await fetchBookList(Number.parseInt(sectionId as string));
-                } catch (error) {
-                    setErrorState(error as Error, "책 목록을 불러오는데 실패했습니다.");
-                }
             }
-            setIsLoading(false);
-        }
+
+            try {
+                if (authStore.isLoading) {
+                    await authStore.loadUser();
+                }
+                if (!authStore.isLoading && authStore.user) {
+                    await fetchBookList(Number(sectionId));
+                    setIsLoading(false);
+                }
+            } catch (error) {
+                setErrorState(error as Error, "데이터를 불러오는데 실패했습니다.");
+                router.push('/section/list');
+            }
+        };
+
         initAllData();
-    }, [sectionId, router, setErrorState]);
+    }, [router.isReady, router.query.sectionId, router, setErrorState]);
+
+    const handleSearch = async (keyword: string, condition?: number) => {
+        if(!condition) return;
+        return await searchBooks(condition, keyword);
+    };
+
+    const handleMove = () => {
+        Router.push('/section/book/create');
+    };
 
     const handleMenu = () => {
-        //수정, 취소, 삭제 Modal
         alert("Show Modal");
+    };
+
+    if (isLoading) {
+        return <Container><p>Loading...</p></Container>;
     }
+
     const thumbnails: BasicThumbnailProps[] = bookStore.books.map(book => ({
         label: book.title,
         target_id: book.id as number,
@@ -81,38 +81,17 @@ const LibraryBooks: React.FC = observer(() => {
         move_to_where: `/section/book/read?bookId=${book.id}`,
     }));
 
-    if (isLoading) {
-        return <Container><p>Loading...</p></Container>;
-    }
-
     return (
         <Container>
-            {authStore.user ? (
-                <>
-                    <p>Welcome, {authStore.user.email}</p>
-                    {bookStore.loading ? (
-                        <p>Loading sections...</p>
-                    ) : (
-                        <>
-                            <SearchComponent 
-                                handleSearch={ handleSearch }
-                                move_path='/section/book/read'
-                                condition={Number.parseInt(sectionId as string)}
-                            />
-                            <Suspense fallback={<div>Loading button...</div>}>
-                                <ThumbListComponent thumbnails={thumbnails} />
-                            </Suspense>
-                            <BasicButton background_color={'green'} label={'Book 추가'} onClick={handleMove} />
-                        </>
-                    )}
-                </>
-                
-            ) : (
-                <p>Loading...</p>
-            )}
-            
+            <SearchComponent 
+                handleSearch={handleSearch}
+                move_path='/section/book/read'
+                condition={Number(router.query.sectionId as string)}
+            />
+            <ThumbListComponent thumbnails={thumbnails} />
+            <BasicButton background_color={'green'} label={'Book 추가'} onClick={handleMove} />
         </Container>
-    )
+    );
 });
 
 export default LibraryBooks;
