@@ -1,7 +1,6 @@
 import Router from 'next/router';
 import { makeAutoObservable, runInAction } from 'mobx';
-import { IUser } from '@api/models/IUser';
-import { IAuth } from '@api/models/IAuth';
+import { IUser, IAuth } from '@api/AuthApi';
 import HttpRequests from '@util/HttpRequests';
 import { AUTH_ERROR_CODE } from '@util/constans';
 import { printLog } from '@util/Utils';

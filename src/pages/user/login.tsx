@@ -6,7 +6,7 @@ import { printLog } from '@util/Utils';
 import { LOG_LEVEL } from '@util/constans';
 import { observer } from 'mobx-react-lite';
 import { StoreContext } from '@page/_app';
-import { login } from '@api/LoginApi';
+import { login } from '@api/AuthApi';
 
 const ChildComponent = styled.div`
   display: flex;

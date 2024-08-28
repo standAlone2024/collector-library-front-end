@@ -1,7 +1,7 @@
 import HttpRequests from '@util/HttpRequests';
 import { bookStore } from '@store';
 import { printLog } from '@util/Utils';
-import { SearchResult } from './models/ISection';
+import { SearchResult } from '@api/SectionApi'
 
 export const fetchBookList = async(sectionId: number | undefined) => {
     if(!sectionId)

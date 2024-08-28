@@ -2,7 +2,7 @@ import React, { useState, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import { updateSection, uploadImage } from '@api/SectionApi';
 import { printLog } from '@util/Utils';
-import { ISection } from '@api/models/ISection';
+import { ISection } from '@api/SectionApi';
 
 interface ImageUpdateDeleteProps {
   isVisible: boolean;

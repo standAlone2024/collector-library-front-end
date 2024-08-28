@@ -1,8 +1,8 @@
-import { SearchResult } from '@api/models/ISection';
 import Router from 'next/router';
 import React, { useState, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import debounce from 'lodash/debounce';
+import { SearchResult } from '@api/SectionApi';
 
 interface SearchComponentProps {
   handleSearch: (keyword: string, condition?: number) => Promise<SearchResult[] | undefined>;

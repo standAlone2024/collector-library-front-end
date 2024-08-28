@@ -7,7 +7,7 @@ import { BasicThumbnailProps, BasicButton } from '@view/atoms';
 import { ThumbListComponent } from '@view/compoments';
 import { ImageSelectorModal, ImageUpdateDeleteModal, ConfirmModal, useError } from '@view/etc';
 import { printLog } from '@util/Utils';
-import { ISection } from '@/apis/models/ISection';
+import { ISection } from '@api/SectionApi';
 
 const Container = styled.div`
   position: absolute;

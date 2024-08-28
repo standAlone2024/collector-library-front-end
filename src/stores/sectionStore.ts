@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction, action } from 'mobx';
-import { ISection } from '@model/ISection';
+import { ISection } from '@api/SectionApi';
 
 class SectionStore {
   sections: ISection[] = [];

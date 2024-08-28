@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { printLog } from '@util/Utils';
 import HttpRequests from '@util/HttpRequests';
-import { IAuth } from '@api/models/IAuth';
 import { authStore } from '@store';
+import { ROLE } from "@util/constans";
 
 export const register = async(email: string, password: string) => {
     try{
@@ -47,4 +47,19 @@ export const login = async(email: string, password: string) => {
             throw new Error('An unknown error occurred');
         }
     }
+}
+
+export interface IUser {
+    id?: number;
+    role: ROLE;
+    email: string;
+    password: string;
+    name?: string;
+    phone?: string;
+    date: Date;
+}
+
+export interface IAuth {
+    token: string,
+    user: IUser
 }

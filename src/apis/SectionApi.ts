@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { printLog } from '@util/Utils';
 import HttpRequests from '@util/HttpRequests';
-import { ISection, SearchResult } from './models/ISection';
 import { sectionStore } from '@store';
 
 export const fetchSectionList = async(userId: number | undefined) => {
@@ -105,3 +104,18 @@ export const uploadImage = async(file: File, userId: number) => {
         throw error
     }
 }
+
+export interface ISection {
+    id?: number;
+    user_id: number;
+    order: number;
+    label: string;
+    sec_thumb_path?: string;
+    date?: Date;
+}
+
+export type SearchResult = {
+    id: number;
+    label: string;
+    thumb_path?: string;
+};
