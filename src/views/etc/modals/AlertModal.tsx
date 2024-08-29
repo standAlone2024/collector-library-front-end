@@ -20,12 +20,15 @@ const Button = styled.button`
 `;
 
 interface AlertModalProps {
+  isVisible: boolean,
   title: string;
   message: string;
   onConfirm: () => void;
 }
 
-const AlertModal: React.FC<AlertModalProps> = ({ title, message, onConfirm }) => {
+const AlertModal: React.FC<AlertModalProps> = ({ isVisible, title, message, onConfirm }) => {
+  if (!isVisible) return null;
+
   return (
     <BaseModal onClose={onConfirm}>
       <Title>{title}</Title>

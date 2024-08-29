@@ -48,7 +48,7 @@ export const Top: React.FC = observer(() => {
     Router.push(path);
   };
 
-  if (router.pathname !== '/' && authStore.isLoading) {
+  if ((router.pathname !== '/' && !(router.pathname.startsWith('/user'))) && authStore.isLoading) {
     return (
       <TopContainer>
         <BasicLabel description="Loading..." />
@@ -73,8 +73,12 @@ export const Top: React.FC = observer(() => {
               padding: '5px',
             }}
           >
-            <Icon src={'/icons/logout.png'} alt="icon" />
-            <span>logout</span>
+            {!(router.pathname.startsWith('/user')) && 
+              <>
+                <Icon src={'/icons/logout.png'} alt="icon" />
+                <span>logout</span>
+              </>
+            }
           </button>
         ) : (
           <button
@@ -89,8 +93,12 @@ export const Top: React.FC = observer(() => {
               padding: '5px',
             }}
           >
-            <Icon src={'/icons/login.png'} alt="icon" />
-            <span>login</span>
+            {!(router.pathname.startsWith('/user')) && 
+              <>
+                <Icon src={'/icons/login.png'} alt="icon" />
+                <span>login</span>
+              </>
+            }
           </button>
         )}
       </ChildContainer>

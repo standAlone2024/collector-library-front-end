@@ -1,6 +1,7 @@
 import React, { useCallback, useRef, useState } from "react";
 import styled from "styled-components";
-import { uploadImage } from '@api/SectionApi';
+import { uploadImage } from '@api/ImageApi';
+import { printLog } from "@/utils/Utils";
 
 interface BasicBookProps {
     userId: number,
@@ -93,16 +94,14 @@ export const BasicBook: React.FC<BasicBookProps> = ({
 
     const hanleModify = async() => {
         try{
-            if(!title)
-                setError("제목은 필수 입력값입니다.");
             let s3Path = '';
             if(userId)
             {
                 if (selectedImage?.file)
                 {
-                    const thumbnailPath = await uploadImage(selectedImage.file, userId);
-                    if(thumbnailPath)
-                        s3Path = thumbnailPath;
+                    const imageResult = await uploadImage(selectedImage.file, userId);
+                    if(imageResult)
+                      s3Path = imageResult.thumbnail_path;
                     else
                         setError("이미지 업로드 실패");
                 }

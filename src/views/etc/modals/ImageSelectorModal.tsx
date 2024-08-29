@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 import styled from 'styled-components';
-import { createSection, uploadImage } from '@api/SectionApi';
+import { uploadImage } from '@api/ImageApi';
 import { printLog } from '@util/Utils';
 
 interface ImageSelectorModalProps {
@@ -119,9 +119,9 @@ export const ImageSelectorModal: React.FC<ImageSelectorModalProps> = ({
       // 이미지 업로드 및 처리
         if (selectedImage?.file)
         {
-          const _thumbnailPath = await uploadImage(selectedImage.file, userId);
-          if(_thumbnailPath)
-            thumbnailPath = _thumbnailPath;
+          const imageResult = await uploadImage(selectedImage.file, userId);
+          if(imageResult)
+            thumbnailPath = imageResult.thumbnail_path;
           else
             throw new Error("이미지 업로드 실패");
         }

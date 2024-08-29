@@ -90,21 +90,6 @@ export const searchSection = async(keyword: string) => {
     }
 }
 
-export const uploadImage = async(file: File, userId: number) => {
-    if(!file || !userId)
-        return;
-
-    const formData = new FormData();
-    formData.append('image', file);
-    formData.append('userId', userId.toString());
-    try{
-        const response = await HttpRequests.getInstance().post<Promise<{ originalPath: string, thumbnailPath: string }>>('/image/upload', formData);
-        return response.thumbnailPath;
-    }catch(error){
-        throw error
-    }
-}
-
 export interface ISection {
     id?: number;
     user_id: number;

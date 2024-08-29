@@ -61,7 +61,7 @@ const LibraryBooks: React.FC = observer(() => {
     };
 
     const handleMove = () => {
-        Router.push('/section/book/create');
+        Router.push(`/section/book/create?sectionId=${router.query.sectionId}`);
     };
 
     const handleMenu = () => {

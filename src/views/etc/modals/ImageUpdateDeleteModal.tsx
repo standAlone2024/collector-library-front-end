@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 import styled from 'styled-components';
-import { updateSection, uploadImage } from '@api/SectionApi';
+import { uploadImage } from '@api/ImageApi';
 import { printLog } from '@util/Utils';
 import { ISection } from '@api/SectionApi';
 
@@ -118,9 +118,9 @@ export const ImageUpdateDeleteModal: React.FC<ImageUpdateDeleteProps> = ({
       let updatedSection = { ...section }; // 섹션의 복사본 생성
       if(selectedImage && userId){
         // 이미지 업로드 및 처리
-        const thumbnailPath = await uploadImage(selectedImage.file, userId);
-        if(thumbnailPath){
-          updatedSection.sec_thumb_path = thumbnailPath;
+        const imageResult = await uploadImage(selectedImage.file, userId);
+        if(imageResult){
+          updatedSection.sec_thumb_path = imageResult.thumbnail_path;
         }
       }
       updatedSection.label = inputValue as string;

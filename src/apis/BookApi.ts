@@ -10,12 +10,32 @@ export const fetchBookList = async(sectionId: number | undefined) => {
     bookStore.setLoading(true);
     try {
         const response = await HttpRequests.getInstance().get<{books : IBook[]}>(`/book/${sectionId}`);
-        const books = response.books;
-        if(books)
-            bookStore.setBooks(books);
+        if(response.books)
+            bookStore.setBooks(response.books);
     }catch(err) {
         throw err;
     }finally {
+        bookStore.setLoading(false);
+    }
+}
+
+export const createBook = async(book:IBook) => {
+    if(!book)
+        return;
+    printLog(book);
+    bookStore.setLoading(true);
+    try{
+        const response = await HttpRequests.getInstance().post<{book: IBook}>(`/book`, book);
+        if(response.book)
+        {
+            bookStore.addBook(response.book);
+            // printLog('id: ' + response.book.id);
+            printLog('id: ' + response.book.id);
+            return response.book.id;
+        }
+    }catch(err) {
+        throw err;
+    }finally{
         bookStore.setLoading(false);
     }
 }
@@ -46,6 +66,7 @@ const toSearchResult = (bookResult: IBookResult[]) => {
     printLog(rev.length);
     return rev;
 }
+
 export interface IBookResult {
     id: number;
     title: string;
@@ -59,5 +80,5 @@ export interface IBook {
     title: string;
     book_thumb_path?: string;
     description?: string;
-    date: Date;
+    date?: Date;
 }
