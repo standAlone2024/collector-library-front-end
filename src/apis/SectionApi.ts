@@ -96,7 +96,8 @@ export interface ISection {
     order: number;
     label: string;
     sec_thumb_path?: string;
-    date?: Date;
+    created_date?: Date;
+    updated_date?: Date;
 }
 
 export type SearchResult = {

@@ -115,5 +115,6 @@ export interface IBook {
     title: string;
     book_thumb_path?: string;
     description?: string;
-    date?: Date;
+    created_date?: Date;
+    updated_date?: Date;
 }
