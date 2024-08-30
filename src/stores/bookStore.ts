@@ -50,7 +50,7 @@ class BookStore{
 
     deleteBook(id: number) {
         runInAction(() => {
-            this.books = this.books.filter(book => book.id === id);
+            this.books = this.books.filter(book => book.id !== id);
         });
     }
 }

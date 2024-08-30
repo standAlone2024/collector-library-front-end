@@ -54,6 +54,41 @@ export const searchBooks = async(sectionId: number, keyword: string) => {
     }
 }
 
+export const deleteBook = async(selectedId: number) => {
+    if(!selectedId)
+        return;
+    bookStore.setLoading(true);
+    printLog(selectedId);
+    try{
+        const response = await HttpRequests.getInstance().delete<{message: string}>(`/book/${selectedId}`);
+        if(response.message)
+        {
+            printLog(response.message)
+            bookStore.deleteBook(selectedId);
+        }
+    }catch(err) {
+        throw err;
+    }finally{
+        bookStore.setLoading(false);
+    }
+}
+
+export const updateBook = async(book: IBook) =>{
+    if(!book)
+        return;
+    bookStore.setLoading(true);
+    printLog(book);
+    try{
+        const response = await HttpRequests.getInstance().put<{book: IBook}>(`/book/${book.id}`, book);
+        if(response.book)
+            bookStore.updateBook(response.book)
+    }catch(err) {
+        throw err
+    }finally{
+        bookStore.setLoading(false);
+    }
+}
+
 const toSearchResult = (bookResult: IBookResult[]) => {
     let rev: SearchResult[] = [];
     bookResult.map((book => {

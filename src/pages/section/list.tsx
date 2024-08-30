@@ -53,8 +53,8 @@ const List: React.FC = observer(() => {
   };
 
   const handleDelete = async(id: number) => {
-    setIsUDModalVisible(false);
     setSelectedSectionId(id);
+    setIsUDModalVisible(false);
     setIsDConfirmModalVisible(true);
   };
 
