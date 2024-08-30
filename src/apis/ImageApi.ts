@@ -9,6 +9,7 @@ export const uploadImage = async(file: File, userId: number, path: string) => {
     const formData = new FormData();
     formData.append('image', file);
     formData.append('userId', userId.toString());
+    formData.append('rootPath', path);
     try{
         const response = await HttpRequests.getInstance()
         .post<Promise<{ imageResult: IImageReult }>>('/image/upload', formData);

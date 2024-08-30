@@ -101,8 +101,10 @@ export const BasicBook: React.FC<BasicBookProps> = ({
                 if (selectedImage?.file)
                 {
                     const imageResult = await uploadImage(selectedImage.file, userId, PATH_BOOK);
-                    if(imageResult)
+                    if(imageResult){
+                      printLog(imageResult.extracted_text);
                       s3Path = imageResult.thumbnail_path;
+                    }
                     else
                         setError("이미지 업로드 실패");
                 }
