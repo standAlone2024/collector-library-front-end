@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import { uploadImage } from '@api/ImageApi';
 import { printLog } from '@util/Utils';
+import { PATH_SECTION } from '@util/constans';
 import { ISection } from '@api/SectionApi';
 
 interface ImageUpdateDeleteProps {
@@ -118,7 +119,7 @@ export const ImageUpdateDeleteModal: React.FC<ImageUpdateDeleteProps> = ({
       let updatedSection = { ...section }; // 섹션의 복사본 생성
       if(selectedImage && userId){
         // 이미지 업로드 및 처리
-        const imageResult = await uploadImage(selectedImage.file, userId);
+        const imageResult = await uploadImage(selectedImage.file, userId, PATH_SECTION);
         if(imageResult){
           updatedSection.sec_thumb_path = imageResult.thumbnail_path;
         }

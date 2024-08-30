@@ -1,6 +1,7 @@
 import React, { useCallback, useRef, useState } from "react";
 import styled from "styled-components";
 import { uploadImage } from '@api/ImageApi';
+import { PATH_BOOK } from '@util/constans'
 import { printLog } from "@/utils/Utils";
 
 interface BasicBookProps {
@@ -99,7 +100,7 @@ export const BasicBook: React.FC<BasicBookProps> = ({
             {
                 if (selectedImage?.file)
                 {
-                    const imageResult = await uploadImage(selectedImage.file, userId);
+                    const imageResult = await uploadImage(selectedImage.file, userId, PATH_BOOK);
                     if(imageResult)
                       s3Path = imageResult.thumbnail_path;
                     else

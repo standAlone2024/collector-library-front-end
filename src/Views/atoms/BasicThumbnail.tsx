@@ -1,6 +1,8 @@
 import Router from 'next/router';
 import React from 'react';
 import styled from 'styled-components';
+import { S3_PATH } from '@util/constans';
+import { printLog } from '@util/Utils';
 
 export interface BasicThumbnailProps{
     label: string;
@@ -63,7 +65,7 @@ export const BasicThumbnail: React.FC<BasicThumbnailProps> = ({ label, target_id
             <StyleBack 
                 $background_color={background_color}
                 onClick={() => handleMove(move_to_where)}>
-                <ThumbImg src={img_url ? img_url : '/icons/no_photography.png'}/>
+                <ThumbImg src={img_url ? (S3_PATH + img_url) : '/icons/no_photography.png'}/>
                 <BottomArea>
                     <CenteredSpan>{label}</CenteredSpan>
                     <IconWrapper>

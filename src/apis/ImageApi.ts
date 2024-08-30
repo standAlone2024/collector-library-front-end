@@ -1,7 +1,7 @@
 import { printLog } from '@util/Utils';
 import HttpRequests from '@util/HttpRequests';
 
-export const uploadImage = async(file: File, userId: number) => {
+export const uploadImage = async(file: File, userId: number, path: string) => {
     printLog('upload file');
     if(!file || !userId)
         return;
