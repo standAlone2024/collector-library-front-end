@@ -5,22 +5,60 @@ import Router, { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { useError } from '@view/etc';
 import { authStore, bookStore } from '@/stores';
-import { createBook, IBook } from '@/apis/BookApi';
+import { createBook, IBookWithOCR } from '@/apis/BookApi';
 import AlertModal from '@view/etc/modals/AlertModal';
-import { printLog } from '@/utils/Utils';
+import { printLog } from '@util/Utils';
+import { BasicContainer } from '@view/atoms';
 
-const Container = styled.div`
+// const FloatingArea = styled.div`
+//   position: fixed;
+//   bottom: 20px;
+//   right: 20px;
+//   background-color: white;
+//   padding: 15px;
+//   border-radius: 8px;
+//   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+// `;
+
+const ContentContainer = styled.div`
+  width: 100%;
+  height: calc(100% - 150px); // FloatingArea의 높이를 150px로 가정
+  overflow-y: auto;
+`;
+
+const FloatingArea = styled.div`
   position: absolute;
-  top: 55px;
+  bottom: 0;
   left: 0;
   right: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-top: 1rem;
-  margin: 0.5rem;
-  overflow: auto;
+  height: 150px; // 높이를 150px로 증가
+  background-color: white;
+  padding: 10px 15px;
+  overflow-y: auto;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+`;
+
+const ExtractedTextGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  padding: 10px 0;
+`;
+
+const ExtractedTextButton = styled.button`
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
+  &:hover {
+    background-color: #e0e0e0;
+  }
 `;
 
 const LibraryBookCreate: React.FC = observer(() => {
@@ -29,6 +67,11 @@ const LibraryBookCreate: React.FC = observer(() => {
     const [isLoading, setIsLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [sectionId, setSectionId] = useState(0);
+    const [extractedText, setExtractedText] = useState<string[]>([]);
+
+    const handleExtractedTextChange = (text: string[]) => {
+        setExtractedText(text);
+    };
 
     useEffect(() => {
         const initAllData = async() => {
@@ -45,7 +88,10 @@ const LibraryBookCreate: React.FC = observer(() => {
                 if(authStore.isLoading)
                     await authStore.loadUser();
             }catch(err) {
-
+                if(err instanceof Error)
+                    setErrorState(err, "데이터 로드 실패");
+                else
+                    setErrorState(new Error('An unknown error occurred'));
             }
         }
 
@@ -53,14 +99,14 @@ const LibraryBookCreate: React.FC = observer(() => {
     }, [router, router.isReady, router.query.sectionId, setErrorState]);
 
 
-    const handleOnCreate = async(title: string, thumb_path?: string, description?: string) => {
+    const handleOnCreate = async(title: string, thumb_path?: string, description?: string, extracted_text?: string[]) => {
         printLog('Click 완료 ' + title.length);
         if(!title || title.length === 0)
             setErrorState(new Error("No title"), "제목은 필수값입니다.");
         setIsLoading(true);
         const numberOfBook = bookStore.getBooks.length;
         printLog(sectionId, numberOfBook, title);
-        const book = makeBook(sectionId, numberOfBook, title, thumb_path, description);
+        const book = makeBook(sectionId, numberOfBook, title, thumb_path, description, extracted_text);
         if(book)
         {
             try{
@@ -82,7 +128,7 @@ const LibraryBookCreate: React.FC = observer(() => {
         setIsModalVisible(false);
     }
 
-    const makeBook = (sectionId: number, numberOfBook: number, title: string, thumb_path?: string, description?: string) => {
+    const makeBook = (sectionId: number, numberOfBook: number, title: string, thumb_path?: string, description?: string, extracted_text?: string[]) => {
         printLog(sectionId, numberOfBook, title);
         //주의! JavaScript에서 0은 falsy 값입니다. 따라서 !0은 true가 된다.
         if(!sectionId || typeof numberOfBook !== 'number' || !title)
@@ -90,33 +136,57 @@ const LibraryBookCreate: React.FC = observer(() => {
             setErrorState(new Error("Book need more information"), "필수값이 모두 입력되지 않았습니다.");
             return null;
         }
-        const book: IBook = {
+        const book: IBookWithOCR = {
             section_id: sectionId,
             order: (numberOfBook + 1),
             title,
             book_thumb_path: thumb_path,
             description,
+            extracted_text,
         };
         return book;
     }
 
+    const handleExtractedTextClick = (text: string) => {
+        // 여기에 버튼 클릭 시 수행할 동작을 추가합니다.
+        printLog('Click: ' + text);
+    };
+
     if(authStore.isLoading || isLoading)
-        return <Container><p>Loading...</p></Container>;
+        return <BasicContainer isAlignCenter={true} ><p>Loading...</p></BasicContainer>;
 
     return (
-        <Container>
-            <BasicBook
-                userId={authStore.user?.id as number}
-                onCreate={handleOnCreate}
-                //여기 OptLabel의 data를 받아서 넣어야 함
-            />
-            <AlertModal 
-                isVisible={isModalVisible}
-                title='데이터 생성'
-                message='데이터 생성이 완료되었습니다.'
-                onConfirm={handleConfirm}
-            />
-        </Container>
+        <BasicContainer isAlignCenter={true}>
+            <ContentContainer>
+                <BasicBook
+                    userId={authStore.user?.id as number}
+                    onCreate={handleOnCreate}
+                    onExtractedTextChange={handleExtractedTextChange}
+                    //여기 OptLabel의 data를 받아서 넣어야 함
+                />
+                <AlertModal 
+                    isVisible={isModalVisible}
+                    title='데이터 생성'
+                    message='데이터 생성이 완료되었습니다.'
+                    onConfirm={handleConfirm}
+                />
+            </ContentContainer>
+            {extractedText.length > 0 && (
+                <FloatingArea>
+                    <h4>추출된 텍스트:</h4>
+                    <ExtractedTextGrid>
+                        {extractedText.map((text, index) => (
+                            <ExtractedTextButton 
+                                key={index}
+                                onClick={() => handleExtractedTextClick(text)}
+                            >
+                                {text}
+                            </ExtractedTextButton>
+                        ))}
+                    </ExtractedTextGrid>
+                </FloatingArea>
+            )}
+        </BasicContainer>
     )
 });
 

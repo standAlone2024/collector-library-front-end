@@ -4,8 +4,25 @@ export function isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
+
 export function printLog(...args: any[]){
     if(IS_SERVICE)
         return;
     console.log(...args);
 }
+
+//File 비교를 위한 해시 값 생성
+export const calculateFileHash = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        const buffer = event.target?.result as ArrayBuffer;
+        const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        resolve(hashHex);
+      };
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(file);
+    });
+};

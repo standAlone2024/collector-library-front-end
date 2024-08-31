@@ -1,8 +1,8 @@
 import { makeAutoObservable, runInAction, action } from 'mobx';
-import { IBook } from '@api/BookApi';
+import { IBookWithOCR } from '@api/BookApi';
 
 class BookStore{
-    books: IBook[] = [];
+    books: IBookWithOCR[] = [];
     loading: boolean = false;
 
     constructor() {
@@ -19,7 +19,7 @@ class BookStore{
         this.loading = loading;
     }
 
-    setBooks(books: IBook[]) {
+    setBooks(books: IBookWithOCR[]) {
         runInAction(() => {
             this.books = books;
         });
@@ -33,13 +33,13 @@ class BookStore{
         return this.books.find(book => book.id === id);
     }
 
-    addBook(book: IBook) {
+    addBook(book: IBookWithOCR) {
         runInAction(() => {
             this.books.push(book);
         });
     }
 
-    updateBook(updateBook: IBook) {
+    updateBook(updateBook: IBookWithOCR) {
         runInAction(() => {
             const index = this.books.findIndex(book => book.id === updateBook.id);
             if(index !== -1){

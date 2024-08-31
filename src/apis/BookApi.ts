@@ -19,18 +19,18 @@ export const fetchBookList = async(sectionId: number | undefined) => {
     }
 }
 
-export const createBook = async(book:IBook) => {
+export const createBook = async(book:IBookWithOCR) => {
     if(!book)
         return;
     printLog(book);
     bookStore.setLoading(true);
     try{
-        const response = await HttpRequests.getInstance().post<{book: IBook}>(`/book`, book);
+        const response = await HttpRequests.getInstance().post<{book: IBookWithOCR}>(`/book`, book);
         if(response.book)
         {
             bookStore.addBook(response.book);
             // printLog('id: ' + response.book.id);
-            printLog('id: ' + response.book.id);
+            printLog('id: ' + response.book.extracted_text);
             return response.book.id;
         }
     }catch(err) {
@@ -117,4 +117,8 @@ export interface IBook {
     description?: string;
     created_date?: Date;
     updated_date?: Date;
+}
+
+export interface IBookWithOCR extends IBook {
+    extracted_text?: string[];
 }

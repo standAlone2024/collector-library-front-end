@@ -25,8 +25,9 @@ const StyleBack = styled.div<{
 
 const ThumbImg = styled.img`
     padding: 5px;
-    width: 150px; 
-    height: 150px; 
+    width: 120px; 
+    height: auto;
+    // height: 150px; 
     // background-color: red; //영역 확인용
 `;
 

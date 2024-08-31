@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BasicButton, BasicThumbnailProps } from '@view/atoms';
+import { BasicButton, BasicContainer, BasicThumbnailProps } from '@view/atoms';
 import { ThumbListComponent, SearchComponent } from '@view/compoments';
 import { observer } from 'mobx-react-lite';
 import styled from 'styled-components';
@@ -7,20 +7,6 @@ import Router, { useRouter } from 'next/router';
 import { searchBooks, fetchBookList, deleteBook, updateBook } from '@api/BookApi';
 import { authStore, bookStore } from '@store';
 import { ConfirmModal, UpdateDeleteModal, useError } from '@view/etc';
-
-const Container = styled.div`
-  position: absolute;
-  top: 55px;
-  left: 0;
-  right: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-top: 1rem;
-  margin: 0.5rem;
-  overflow: auto;
-`;
 
 const LibraryBooks: React.FC = observer(() => {
     const router = useRouter();
@@ -74,7 +60,7 @@ const LibraryBooks: React.FC = observer(() => {
     };
 
     if (isLoading) {
-        return <Container><p>Loading...</p></Container>;
+        return <BasicContainer><p>Loading...</p></BasicContainer>;
     }
 
     const thumbnails: BasicThumbnailProps[] = bookStore.books.map(book => ({
@@ -146,7 +132,7 @@ const LibraryBooks: React.FC = observer(() => {
     }
 
     return (
-        <Container>
+        <BasicContainer>
             <SearchComponent 
                 handleSearch={handleSearch}
                 move_path='/section/book/read'
@@ -177,7 +163,7 @@ const LibraryBooks: React.FC = observer(() => {
                         onCancel={handleFinalCancel} />
                 </>
             }
-        </Container>
+        </BasicContainer>
     );
 });
 

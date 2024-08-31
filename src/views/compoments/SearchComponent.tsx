@@ -3,6 +3,7 @@ import React, { useState, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import debounce from 'lodash/debounce';
 import { SearchResult } from '@api/SectionApi';
+import { S3_PATH } from '@util/constans';
 
 interface SearchComponentProps {
   handleSearch: (keyword: string, condition?: number) => Promise<SearchResult[] | undefined>;
@@ -143,7 +144,7 @@ export const SearchComponent: React.FC<SearchComponentProps> = ({ handleSearch, 
             tabIndex={0}
             aria-selected={index === 0}
           >
-            <SearchResultThumbnail src={result.thumb_path ? result.thumb_path : '/icons/no_photography.png'} alt="" />
+            <SearchResultThumbnail src={result.thumb_path ? (S3_PATH + result.thumb_path) : '/icons/no_photography.png'} alt="" />
             <SearchResultLabel>{result.label}</SearchResultLabel>
           </SearchResultItem>
         ))}
