@@ -1,6 +1,6 @@
 import { BasicBook } from '@view/templates';
 import { observer } from 'mobx-react-lite';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Router, { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { useError } from '@view/etc';
@@ -9,16 +9,6 @@ import { createBook, IBookWithOCR } from '@/apis/BookApi';
 import AlertModal from '@view/etc/modals/AlertModal';
 import { printLog } from '@util/Utils';
 import { BasicContainer } from '@view/atoms';
-
-// const FloatingArea = styled.div`
-//   position: fixed;
-//   bottom: 20px;
-//   right: 20px;
-//   background-color: white;
-//   padding: 15px;
-//   border-radius: 8px;
-//   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-// `;
 
 const ContentContainer = styled.div`
   width: 100%;
@@ -61,6 +51,14 @@ const ExtractedTextButton = styled.button`
   }
 `;
 
+const InputField = styled.input`
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+
 const LibraryBookCreate: React.FC = observer(() => {
     const router = useRouter();
     const { setErrorState } = useError();
@@ -68,6 +66,29 @@ const LibraryBookCreate: React.FC = observer(() => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [sectionId, setSectionId] = useState(0);
     const [extractedText, setExtractedText] = useState<string[]>([]);
+    const [inputValues, setInputValues] = useState<{[key: string]: string}>({
+        title: '',
+        description: '',
+        childInput: ''
+    });
+    const [focusedField, setFocusedField] = useState<string | null>(null);
+
+    const handleInputChange = (name: string, value: string) => {
+        setInputValues(prev => ({...prev, [name]: value}));
+    };
+
+    const handleInputFocus = (name: string) => {
+        setFocusedField(name);
+    };
+
+    const handleExtractedTextClick = (text: string) => {
+        if (focusedField) {
+            setInputValues(prev => ({
+                ...prev,
+                [focusedField]: prev[focusedField] + text
+            }));
+        }
+    };
 
     const handleExtractedTextChange = (text: string[]) => {
         setExtractedText(text);
@@ -147,10 +168,18 @@ const LibraryBookCreate: React.FC = observer(() => {
         return book;
     }
 
-    const handleExtractedTextClick = (text: string) => {
-        // 여기에 버튼 클릭 시 수행할 동작을 추가합니다.
-        printLog('Click: ' + text);
-    };
+    const childInputFields = [
+        {
+            type: "text",
+            value: inputValues.childInput,
+            onChange: (e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('childInput', e.target.value),
+            onFocus: () => handleInputFocus('childInput'),
+            placeholder: "추가 입력 필드",
+            name: "childInput"
+        }
+        // api call 하여 받아와야 함
+        //현재 mock data
+    ];
 
     if(authStore.isLoading || isLoading)
         return <BasicContainer isAlignCenter={true} ><p>Loading...</p></BasicContainer>;
@@ -158,12 +187,26 @@ const LibraryBookCreate: React.FC = observer(() => {
     return (
         <BasicContainer isAlignCenter={true}>
             <ContentContainer>
-                <BasicBook
+            <BasicBook
                     userId={authStore.user?.id as number}
                     onCreate={handleOnCreate}
                     onExtractedTextChange={handleExtractedTextChange}
-                    //여기 OptLabel의 data를 받아서 넣어야 함
-                />
+                    onInputChange={handleInputChange}
+                    onInputFocus={handleInputFocus}
+                    inputValues={inputValues}
+                >
+                    {childInputFields.map((field, index) => (
+                        <InputField
+                            key={index}
+                            type={field.type}
+                            value={inputValues[field.name]}
+                            onChange={(e) => handleInputChange(field.name, e.target.value)}
+                            onFocus={() => handleInputFocus(field.name)}
+                            placeholder={field.placeholder}
+                            name={field.name}
+                        />
+                    ))}
+                </BasicBook>
                 <AlertModal 
                     isVisible={isModalVisible}
                     title='데이터 생성'
@@ -178,8 +221,7 @@ const LibraryBookCreate: React.FC = observer(() => {
                         {extractedText.map((text, index) => (
                             <ExtractedTextButton 
                                 key={index}
-                                onClick={() => handleExtractedTextClick(text)}
-                            >
+                                onClick={() => handleExtractedTextClick(text)} >
                                 {text}
                             </ExtractedTextButton>
                         ))}
