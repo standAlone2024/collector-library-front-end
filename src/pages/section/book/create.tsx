@@ -1,11 +1,11 @@
 import { BasicBook } from '@view/templates';
 import { observer } from 'mobx-react-lite';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Router, { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { useError } from '@view/etc';
-import { authStore, bookStore } from '@/stores';
-import { createBook, IBookWithOCR } from '@/apis/BookApi';
+import { authStore, bookStore } from '@store';
+import { createBook, IBookWithOCR } from '@api/BookApi';
 import AlertModal from '@view/etc/modals/AlertModal';
 import { printLog } from '@util/Utils';
 import { BasicContainer } from '@view/atoms';
@@ -125,6 +125,7 @@ const LibraryBookCreate: React.FC = observer(() => {
         if(!title || title.length === 0)
             setErrorState(new Error("No title"), "제목은 필수값입니다.");
         setIsLoading(true);
+        //TODO: order에 1이 계속 들어가고 있음 bookStore.getBooks.length 확인해 봐야 함
         const numberOfBook = bookStore.getBooks.length;
         printLog(sectionId, numberOfBook, title);
         const book = makeBook(sectionId, numberOfBook, title, thumb_path, description, extracted_text);
@@ -187,14 +188,13 @@ const LibraryBookCreate: React.FC = observer(() => {
     return (
         <BasicContainer isAlignCenter={true}>
             <ContentContainer>
-            <BasicBook
+                <BasicBook
                     userId={authStore.user?.id as number}
                     onCreate={handleOnCreate}
                     onExtractedTextChange={handleExtractedTextChange}
                     onInputChange={handleInputChange}
                     onInputFocus={handleInputFocus}
-                    inputValues={inputValues}
-                >
+                    inputValues={inputValues} >
                     {childInputFields.map((field, index) => (
                         <InputField
                             key={index}
