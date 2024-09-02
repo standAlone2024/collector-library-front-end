@@ -97,7 +97,7 @@ export const SearchComponent: React.FC<SearchComponentProps> = ({ handleSearch, 
   );
 
   const handleResultClick = (result: SearchResult) => {
-    Router.push(`${move_path}/${result.id}`);
+    Router.push(`${move_path}?bookId=${result.id}`);
   };
 
   const handleInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
