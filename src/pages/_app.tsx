@@ -1,7 +1,7 @@
 import type { AppProps } from 'next/app';
 import { createContext } from 'react';
 import { observer } from 'mobx-react-lite';
-import { authStore, sectionStore, bookStore } from '@store';
+import { authStore, sectionStore, bookStore, labelStore } from '@store';
 import { Top, Bottom } from '@view/templates';
 import axios from "axios";
 import { Providers } from '@view/templates';
@@ -13,6 +13,7 @@ const stores = {
     authStore,
     sectionStore,
     bookStore,
+    labelStore,
 };
 
 export const StoreContext = createContext(stores);
