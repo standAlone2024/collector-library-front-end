@@ -1,10 +1,11 @@
 import React from 'react';
+import { BasicContainer } from '@view/atoms';
 
 const LibraryBookUpdate: React.FC = () => {
     return (
-        <div>
+        <BasicContainer isAlignCenter={true}>
             LibraryBookUpdate
-        </div>
+        </BasicContainer>
     )
 };
 

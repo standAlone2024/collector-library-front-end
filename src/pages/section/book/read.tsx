@@ -4,7 +4,7 @@ import { BasicContainer } from '@view/atoms';
 import { fetchBook, IBookDeatil } from '@api/BookApi'
 import { observer } from 'mobx-react-lite';
 import { authStore, bookStore } from '@store';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { useError } from '@view/etc';
 import { S3_PATH } from '@util/constans';
 import { ISectionOptLabel } from '@/apis/LabelApi';
@@ -101,6 +101,10 @@ const ReadOnlyTextArea: React.FC<ReadOnlyTextAreaProps> = ({ value }) => {
     return <TextArea value={value} readOnly />;
 };
 
+const handleMove = () => {
+    Router.push('/section/book/update');
+}
+
 const LibraryBookRead: React.FC = observer(() => {
     const router = useRouter();
     const { setErrorState } = useError();
@@ -165,7 +169,7 @@ const LibraryBookRead: React.FC = observer(() => {
                 ))}
                 <ReadOnlyTextArea value={bookData.label_basic.description || ''} />
                 <ButtonContainer>
-                    <Button>수정</Button>
+                    <Button onClick={handleMove}>수정</Button>
                     <Button>인스타 공유</Button>
                 </ButtonContainer>
             </Container>
