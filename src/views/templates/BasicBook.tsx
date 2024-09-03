@@ -6,12 +6,12 @@ import { printLog } from "@util/Utils";
 
 interface BasicBookProps {
   userId: number,
-  onCreate: (title: string, thumb_path?: string, description?: string, extracted_text?: string[]) => Promise<void>;
-  onExtractedTextChange: (text: string[]) => void;
-  onInputChange: (name: string, value: string) => void;
-  onInputFocus: (name: string) => void;
-  inputValues: {[key: string]: string};
-  children: React.ReactNode;
+  onCreate: (title: string, thumb_path?: string, description?: string, extracted_text?: string[]) => Promise<void>,
+  onExtractedTextChange: (text: string[]) => void,
+  onInputChange: (name: string, value: string) => void,
+  onInputFocus: (name: string) => void,
+  inputValues: {[key: string]: string},
+  children: React.ReactNode,
 }
 
 const Container = styled.div`
