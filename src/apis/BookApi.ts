@@ -4,8 +4,8 @@ import { printLog } from '@util/Utils';
 import { SearchResult } from '@api/SectionApi'
 
 export const fetchBookList = async(sectionId: number | undefined) => {
-    if(!sectionId)
-        return;
+    if(!sectionId) return;
+
     printLog("sectionId " + sectionId);
     bookStore.setLoading(true);
     try {
@@ -19,9 +19,28 @@ export const fetchBookList = async(sectionId: number | undefined) => {
     }
 }
 
+export const fetchBook = async(bookId: number | undefined) => {
+    if(!bookId) return;
+
+    printLog("bookId: " + bookId);
+    bookStore.setLoading(true);
+    try{
+        const response = await HttpRequests.getInstance().get<{book: IBookDeatil}>(`/book?id=${bookId}`);
+        if(response.book)
+        {
+            printLog(response.book);
+            bookStore.setBookDetail(response.book);
+        }
+    }catch(err) {
+        throw err;
+    }finally {
+        bookStore.setLoading(false);
+    }
+}
+
 export const createBook = async(book:IBookWithOCR) => {
-    if(!book)
-        return;
+    if(!book) return;
+
     printLog(book);
     bookStore.setLoading(true);
     try{
@@ -41,12 +60,12 @@ export const createBook = async(book:IBookWithOCR) => {
 }
 
 export const searchBooks = async(sectionId: number, keyword: string) => {
-    if(!sectionId || !keyword)
-        return;
+    if(!sectionId || !keyword) return;
+
     printLog(sectionId, keyword);
     try {
         const response = await HttpRequests.getInstance().get<{books: IBookResult[]}>
-        (`/book?section_id=${sectionId}&keyword=${keyword}`);
+        (`/book/search?section_id=${sectionId}&keyword=${keyword}`);
         if(response.books)
             return toSearchResult(response.books);
     }catch(err) {
@@ -55,8 +74,8 @@ export const searchBooks = async(sectionId: number, keyword: string) => {
 }
 
 export const deleteBook = async(selectedId: number) => {
-    if(!selectedId)
-        return;
+    if(!selectedId) return;
+
     bookStore.setLoading(true);
     printLog(selectedId);
     try{
@@ -74,8 +93,8 @@ export const deleteBook = async(selectedId: number) => {
 }
 
 export const updateBook = async(book: IBook) =>{
-    if(!book)
-        return;
+    if(!book) return;
+
     bookStore.setLoading(true);
     printLog(book);
     try{
@@ -121,4 +140,27 @@ export interface IBook {
 
 export interface IBookWithOCR extends IBook {
     extracted_text?: string[];
+}
+
+export interface ILabelExtra {
+    order: number;
+    label_name: string;
+    content: string;
+}
+
+export interface ILabelBasic {
+    title: string;
+    description?: string;
+}
+
+export interface IBookDeatil {
+    id: number;
+    section_id: number;
+    order: number;
+    book_thumb_path?: string;
+    label_basic: ILabelBasic;
+    label_extra?: ILabelExtra[];
+    extracted_text?: string[]; //OCR data
+    created_date: Date;
+    updated_date?: Date;
 }

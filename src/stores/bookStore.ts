@@ -1,8 +1,9 @@
-import { makeAutoObservable, runInAction, action } from 'mobx';
-import { IBookWithOCR } from '@api/BookApi';
+import { makeAutoObservable, runInAction } from 'mobx';
+import { IBookWithOCR, IBookDeatil } from '@api/BookApi';
 
 class BookStore{
     books: IBookWithOCR[] = [];
+    bookDetail: IBookDeatil | null = null;
     loading: boolean = false;
 
     constructor() {
@@ -12,6 +13,7 @@ class BookStore{
     clear() {
         runInAction(() => {
             this.books = [];
+            this.bookDetail = null;
         });
     }
 
@@ -23,6 +25,16 @@ class BookStore{
         runInAction(() => {
             this.books = books;
         });
+    }
+
+    setBookDetail(bookDetail: IBookDeatil) {
+        runInAction(()=> {
+            this.bookDetail = bookDetail;
+        })
+    }
+
+    getBookDetail() {
+        return this.bookDetail;
     }
 
     getBooks() {
