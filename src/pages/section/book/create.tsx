@@ -1,14 +1,15 @@
-import { BasicBook } from '@view/templates';
-import { observer } from 'mobx-react-lite';
 import React, { useState, useEffect } from 'react';
+import { observer } from 'mobx-react-lite';
 import Router, { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { useError } from '@view/etc';
-import { authStore, bookStore } from '@store';
-import { createBook, IBookWithOCR } from '@api/BookApi';
+import { authStore, bookStore, labelStore } from '@store';
+import { fetchLabelList, ISectionOptLabel } from '@api/LabelApi';
+import { createBook, IBookObject, ILabelExtra } from '@api/BookApi';
 import AlertModal from '@view/etc/modals/AlertModal';
 import { printLog } from '@util/Utils';
 import { BasicContainer } from '@view/atoms';
+import { BasicBook } from '@view/templates';
 
 const ContentContainer = styled.div`
   width: 100%;
@@ -69,9 +70,9 @@ const LibraryBookCreate: React.FC = observer(() => {
     const [inputValues, setInputValues] = useState<{[key: string]: string}>({
         title: '',
         description: '',
-        childInput: ''
     });
     const [focusedField, setFocusedField] = useState<string | null>(null);
+    const [childInputFields, setChildInputFields] = useState<ISectionOptLabel[]>([]);
 
     const handleInputChange = (name: string, value: string) => {
         setInputValues(prev => ({...prev, [name]: value}));
@@ -85,7 +86,7 @@ const LibraryBookCreate: React.FC = observer(() => {
         if (focusedField) {
             setInputValues(prev => ({
                 ...prev,
-                [focusedField]: prev[focusedField] + text
+                [focusedField]: prev[focusedField] + ' ' + text
             }));
         }
     };
@@ -98,21 +99,35 @@ const LibraryBookCreate: React.FC = observer(() => {
         const initAllData = async() => {
             if (!router.isReady) return;
 
-            const sectionId = router.query.sectionId;
-            if (!sectionId || Array.isArray(sectionId)) {
+            const _sectionId = router.query.sectionId;
+            if (!_sectionId || Array.isArray(_sectionId)) {
                 setErrorState(new Error("잘못된 접근입니다."), "잘못된 접근입니다.");
                 router.push('/section/list');
                 return;
             }
-            setSectionId(Number(sectionId));
-            try{
-                if(authStore.isLoading)
+            setSectionId(Number(_sectionId));
+            setIsLoading(true);
+            try {
+                if (authStore.isLoading) 
                     await authStore.loadUser();
-            }catch(err) {
+                if (!authStore.isLoading && authStore.user) {
+                    await fetchLabelList(Number(_sectionId));
+                    setChildInputFields(labelStore.getLabels());
+                    
+                    // 동적으로 inputValues 초기화
+                    const newInputValues = {...inputValues};
+                    labelStore.getLabels().forEach(label => {
+                        newInputValues[`label_${label.id}`] = '';
+                    });
+                    setInputValues(newInputValues);
+                    setIsLoading(false);
+                }
+            } catch(err) {
                 if(err instanceof Error)
                     setErrorState(err, "데이터 로드 실패");
                 else
                     setErrorState(new Error('An unknown error occurred'));
+                router.push('/section/book/list');
             }
         }
 
@@ -150,6 +165,19 @@ const LibraryBookCreate: React.FC = observer(() => {
         setIsModalVisible(false);
     }
 
+    const gatherExtraLabel = () => {
+        let labelExtra:ILabelExtra[] = [];
+        childInputFields.map((field) => {
+            labelExtra.push({
+                id: field.id as number,
+                order: field.order,
+                label_name: field.label_name,
+                content: inputValues[`label_${field.id}`],
+            });
+        });
+        return labelExtra;
+    }
+
     const makeBook = (sectionId: number, numberOfBook: number, title: string, thumb_path?: string, description?: string, extracted_text?: string[]) => {
         printLog(sectionId, numberOfBook, title);
         //주의! JavaScript에서 0은 falsy 값입니다. 따라서 !0은 true가 된다.
@@ -158,29 +186,19 @@ const LibraryBookCreate: React.FC = observer(() => {
             setErrorState(new Error("Book need more information"), "필수값이 모두 입력되지 않았습니다.");
             return null;
         }
-        const book: IBookWithOCR = {
+        const labelExtra = gatherExtraLabel();
+
+        const book: IBookObject = {
             section_id: sectionId,
             order: (numberOfBook + 1),
             title,
             book_thumb_path: thumb_path,
             description,
             extracted_text,
+            label_extra: labelExtra,
         };
         return book;
     }
-
-    const childInputFields = [
-        {
-            type: "text",
-            value: inputValues.childInput,
-            onChange: (e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('childInput', e.target.value),
-            onFocus: () => handleInputFocus('childInput'),
-            placeholder: "추가 입력 필드",
-            name: "childInput"
-        }
-        // api call 하여 받아와야 함
-        //현재 mock data
-    ];
 
     if(authStore.isLoading || isLoading)
         return <BasicContainer isAlignCenter={true} ><p>Loading...</p></BasicContainer>;
@@ -195,15 +213,15 @@ const LibraryBookCreate: React.FC = observer(() => {
                     onInputChange={handleInputChange}
                     onInputFocus={handleInputFocus}
                     inputValues={inputValues} >
-                    {childInputFields.map((field, index) => (
+                    {childInputFields.map((field) => (
                         <InputField
-                            key={index}
-                            type={field.type}
-                            value={inputValues[field.name]}
-                            onChange={(e) => handleInputChange(field.name, e.target.value)}
-                            onFocus={() => handleInputFocus(field.name)}
-                            placeholder={field.placeholder}
-                            name={field.name}
+                            key={field.id}
+                            type="text"
+                            value={inputValues[`label_${field.id}`] || ''}
+                            onChange={(e) => handleInputChange(`label_${field.id}`, e.target.value)}
+                            onFocus={() => handleInputFocus(`label_${field.id}`)}
+                            placeholder={field.label_name}
+                            name={`label_${field.id}`}
                         />
                     ))}
                 </BasicBook>

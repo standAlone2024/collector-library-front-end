@@ -38,13 +38,13 @@ export const fetchBook = async(bookId: number | undefined) => {
     }
 }
 
-export const createBook = async(book:IBookWithOCR) => {
+export const createBook = async(book:IBookObject) => {
     if(!book) return;
 
     printLog(book);
     bookStore.setLoading(true);
     try{
-        const response = await HttpRequests.getInstance().post<{book: IBookWithOCR}>(`/book`, book);
+        const response = await HttpRequests.getInstance().post<{book: IBookObject}>(`/book`, book);
         if(response.book)
         {
             bookStore.addBook(response.book);
@@ -137,12 +137,16 @@ export interface IBook {
     created_date?: Date;
     updated_date?: Date;
 }
-
 export interface IBookWithOCR extends IBook {
     extracted_text?: string[];
 }
 
+export interface IBookObject extends IBookWithOCR{
+    label_extra?: ILabelExtra[];
+}
+
 export interface ILabelExtra {
+    id?: number;
     order: number;
     label_name: string;
     content: string;

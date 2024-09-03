@@ -8,9 +8,12 @@ export const fetchLabelList = async(sectionId: number | undefined) => {
 
     labelStore.setLoading(true);
     try{
-        const response = await HttpRequests.getInstance().get<{labels: ISectionOptLabel[]}>(`/label/${sectionId}`);
-        if(response.labels)
-            labelStore.setLabels(response.labels);
+        const response = await HttpRequests.getInstance().get<{sectionLabels: ISectionOptLabel[]}>(`/label/${sectionId}`);
+        if(response.sectionLabels)
+        {
+            printLog(response.sectionLabels);
+            labelStore.setLabels(response.sectionLabels);
+        }
     }catch(err) {
         throw err;
     }finally {
