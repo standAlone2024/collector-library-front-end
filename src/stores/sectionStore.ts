@@ -1,5 +1,6 @@
 import { makeAutoObservable, runInAction, action } from 'mobx';
 import { ISection, ISectionNLabel } from '@api/SectionApi';
+import { ISectionOptLabel } from '@/apis/LabelApi';
 
 class SectionStore {
   sections: ISection[] = [];
@@ -47,6 +48,12 @@ class SectionStore {
     });
   }
 
+  addLabel(label: ISectionOptLabel) {
+    runInAction(()=> {
+       this.sectionNLabel?.label_extra.push(label);
+    });
+  }
+
   updateSection(updatedSection: ISection) {
     runInAction(() => {
       const index = this.sections.findIndex(section => section.id === updatedSection.id);
@@ -63,6 +70,14 @@ class SectionStore {
   deleteSection(id: number) {
     runInAction(() => {
       this.sections = this.sections.filter(section => section.id !== id);
+    });
+  }
+
+  deleteLabel(id: number) {
+    runInAction(() => {
+      if (this.sectionNLabel && this.sectionNLabel.label_extra) {
+        this.sectionNLabel.label_extra = this.sectionNLabel.label_extra.filter(label => label.id !== id);
+      }
     });
   }
 

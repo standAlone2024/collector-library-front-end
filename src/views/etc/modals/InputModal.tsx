@@ -43,19 +43,22 @@ const CancelButton = styled(Button)`
 `;
 
 interface InputModalProps {
+  isVisible: boolean,
   title: string;
   message: string;
   onSubmit: (input: string) => void;
   onCancel: () => void;
 }
 
-const InputModal: React.FC<InputModalProps> = ({ title, message, onSubmit, onCancel }) => {
+const InputModal: React.FC<InputModalProps> = ({ isVisible, title, message, onSubmit, onCancel }) => {
   const [input, setInput] = useState('');
 
   const handleSubmit = () => {
     onSubmit(input);
     setInput('');
   };
+
+  if (!isVisible) return null;
 
   return (
     <BaseModal onClose={onCancel}>
@@ -65,11 +68,11 @@ const InputModal: React.FC<InputModalProps> = ({ title, message, onSubmit, onCan
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        placeholder="Enter your input here"
+        placeholder="여기에 입력해 주세요"
       />
       <ButtonContainer>
-        <CancelButton onClick={onCancel}>Cancel</CancelButton>
-        <SubmitButton onClick={handleSubmit}>Submit</SubmitButton>
+        <CancelButton onClick={onCancel}>취소</CancelButton>
+        <SubmitButton onClick={handleSubmit}>확인</SubmitButton>
       </ButtonContainer>
     </BaseModal>
   );

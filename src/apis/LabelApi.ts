@@ -1,5 +1,5 @@
 import HttpRequests from '@util/HttpRequests';
-import { bookStore, labelStore } from '@store';
+import { bookStore, labelStore, sectionStore } from '@store';
 import { printLog } from '@util/Utils';
 
 export const fetchLabelList = async(sectionId: number | undefined) => {
@@ -27,9 +27,12 @@ export const createLabel = async(label : ISectionOptLabel | undefined) => {
 
     labelStore.setLoading(true);
     try{
-        const response = await HttpRequests.getInstance().post<{label: ISectionOptLabel}>(`/label`);
+        const response = await HttpRequests.getInstance().post<{label: ISectionOptLabel}>(`/label`, label);
         if(response.label)
+        {
             labelStore.addLabel(response.label);
+            sectionStore.addLabel(response.label);
+        }
     }catch(err) {
         throw err;
     }finally {
@@ -63,7 +66,8 @@ export const deleteLabel = async(id: number | undefined) => {
         if(response.message)
         {
             printLog('message: ' + response.message);
-            bookStore.deleteBook(id);
+            labelStore.deleteLabel(id);
+            sectionStore.deleteLabel(id);
         }
     }catch(err) {
         throw err;
