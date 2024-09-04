@@ -7,8 +7,7 @@ import { authStore, bookStore } from '@store';
 import Router, { useRouter } from 'next/router';
 import { useError } from '@view/etc';
 import { S3_PATH } from '@util/constans';
-import { ISectionOptLabel } from '@/apis/LabelApi';
-import { printLog } from '@/utils/Utils';
+import { printLog, swapOriginal } from '@/utils/Utils';
 
 const Container = styled.div`
   display: flex;
@@ -28,18 +27,33 @@ const ImageContainer = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 8px;
-  overflow: hidden; // 이미지가 컨테이너를 벗어나지 않도록 함
+  overflow: hidden;
+  position: relative; // 배경 이미지를 위해 추가
 `;
 
 const StyledImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover; // 이미지 비율을 유지하면서 컨테이너를 채움
-  object-position: center; // 이미지를 중앙에 위치시킴
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; // 이미지 비율을 유지하면서 전체가 표시되도록 함
+  position: relative; // 배경 이미지 위에 표시되도록 함
+  z-index: 1; // 배경 이미지 위에 표시되도록 함
+`;
+
+const BackgroundImage = styled.div<{ src: string }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url(${props => props.src});
+  background-size: cover;
+  background-position: center;
+  filter: blur(10px); // 배경 흐림 효과
+  opacity: 0.5; // 배경 투명도
 `;
 
 const LabelContainer = styled.div`
-    display: flex;
+display: flex;
   flex-direction: row;
   width: 100%;
   padding: 10px;
@@ -101,8 +115,8 @@ const ReadOnlyTextArea: React.FC<ReadOnlyTextAreaProps> = ({ value }) => {
     return <TextArea value={value} readOnly />;
 };
 
-const handleMove = () => {
-    Router.push('/section/book/update');
+const handleMove = (bookId: number) => {
+    Router.push(`/section/book/update?bookId=${bookId}`);
 }
 
 const LibraryBookRead: React.FC = observer(() => {
@@ -144,6 +158,10 @@ const LibraryBookRead: React.FC = observer(() => {
         initAllDate();
     }, [router, router.isReady, router.query.bookId, setErrorState]);
 
+    let originPath = '';
+    if(bookData?.book_thumb_path)
+        originPath = swapOriginal(bookData?.book_thumb_path);
+    
     if(isLoading || !bookData)
         return (<BasicContainer isAlignCenter={true}><p>Loading book info...</p></BasicContainer>);
 
@@ -151,10 +169,16 @@ const LibraryBookRead: React.FC = observer(() => {
         <BasicContainer isAlignCenter={true}>
             <Container>
                 <ImageContainer>
-                    {bookData.book_thumb_path ? (
-                        <StyledImage src={S3_PATH + (bookData.book_thumb_path)} alt="Book" />
+                    {originPath.length > 0 ? (
+                        <>
+                            <BackgroundImage src={S3_PATH + (originPath)} />
+                            <StyledImage src={S3_PATH + (originPath)} alt="Book" />
+                        </>
                     ) : (
-                        <StyledImage src='/icons/no_photography.png' alt="Book" />
+                        <>
+                            <BackgroundImage src='/icons/no_photography.png' />
+                            <StyledImage src='/icons/no_photography.png' alt="Book" />
+                        </>
                     )}
                 </ImageContainer>
                 <LabelContainer>
@@ -169,7 +193,7 @@ const LibraryBookRead: React.FC = observer(() => {
                 ))}
                 <ReadOnlyTextArea value={bookData.label_basic.description || ''} />
                 <ButtonContainer>
-                    <Button onClick={handleMove}>수정</Button>
+                    <Button onClick={() => handleMove(bookData.id)}>수정</Button>
                     <Button>인스타 공유</Button>
                 </ButtonContainer>
             </Container>

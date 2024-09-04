@@ -8,6 +8,7 @@ export const IS_SERVICE                 = false;
 export const PATH_SECTION               = 'sections';
 export const PATH_BOOK                  = 'books';
 export const S3_PATH = `https://${process.env.NEXT_PUBLIC_S3_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com`;
+export const PATH_ORIGIN = 'origin';
 export const enum LOG_LEVEL {
     LOG, WARNING, ERROR
 };

@@ -1,4 +1,4 @@
-import { IS_SERVICE, LOG_LEVEL } from "./constans";
+import { IS_SERVICE, LOG_LEVEL, PATH_ORIGIN } from "./constans";
 export function isValidEmail(email: string): boolean {
     // 이메일 유효성 검사를 위한 정규 표현식
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -26,3 +26,11 @@ export const calculateFileHash = async (file: File): Promise<string> => {
       reader.readAsArrayBuffer(file);
     });
 };
+
+export const swapOriginal = (imgPath: string) => {
+  const pathParts = imgPath.split('/');
+  // printLog(pathParts);
+  if(pathParts.length >= 4 && pathParts[3] === 'thumbnail')
+    pathParts[3] = PATH_ORIGIN;
+  return pathParts.join('/');
+}
