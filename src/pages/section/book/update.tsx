@@ -137,29 +137,70 @@ const ButtonContainer = styled.div`
   gap: 10px;
 `;
 
-const handleUpdate = () => {
-    alert('update api call');
-}
-
-const handleImageDelete = () => {
-    alert('delete image api call');
-}
-
-const handleImageChange = () => {
-    alert('change image api call');
-}
-
 const LibraryBookUpdate: React.FC = observer(() => {
     const router = useRouter();
     const { setErrorState } = useError();
     const [bookData, setBookData] = useState<IBookDeatil | null>(null);
     const [updatedBookData, setUpdatedBookData] = useState<IBookDeatil | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [focusedInput, setFocusedInput] = useState<string | null>(null);
     const [extractedText, setExtractedText] = useState<string[]>([]);
+    const [focusedInput, setFocusedInput] = useState<string | null>(null);
+
+    const handleUpdate = () => {
+        printLog(updatedBookData);
+        alert('update api call');
+    }
+    
+    const handleImageDelete = () => {
+        alert('delete image api call');
+    }
+    
+    const handleImageChange = () => {
+        alert('change image api call');
+    }
 
     const handleInputFocus = (inputName: string) => {
         setFocusedInput(inputName);
+    };
+
+    const handleContentChange = (key: string, value: string) => {
+        if (updatedBookData) {
+            if (key === 'title') {
+                setUpdatedBookData({
+                    ...updatedBookData,
+                    label_basic: { ...updatedBookData.label_basic, title: value }
+                });
+            } else if (key === 'description') {
+                setUpdatedBookData({
+                    ...updatedBookData,
+                    label_basic: { ...updatedBookData.label_basic, description: value }
+                });
+            } else {
+                const updatedLabelExtra = updatedBookData.label_extra?.map(item =>
+                    item.label_name === key ? { ...item, content: value } : item
+                );
+                setUpdatedBookData({ ...updatedBookData, label_extra: updatedLabelExtra });
+            }
+        }
+    };
+
+    const handleExtractedTextClick = (text: string) => {
+        if (focusedInput && updatedBookData) {
+            let currentValue = '';
+            if (focusedInput === 'title' && updatedBookData.label_basic.title) {
+                currentValue = updatedBookData.label_basic.title;
+            } else if (focusedInput === 'description') {
+                currentValue = (updatedBookData.label_basic.description) ? updatedBookData.label_basic.description : '';
+            } else {
+                const extraLabel = updatedBookData.label_extra?.find(item => item.label_name === focusedInput);
+                if (extraLabel && extraLabel.content) {
+                    currentValue = extraLabel.content;
+                }
+            }
+            
+            const newValue = currentValue.length > 0 ? `${currentValue} ${text}` : text;
+            handleContentChange(focusedInput, newValue);
+        }
     };
 
     useEffect(() => {
@@ -206,22 +247,6 @@ const LibraryBookUpdate: React.FC = observer(() => {
     if(bookData?.book_thumb_path)
         originPath = swapOriginal(bookData?.book_thumb_path);
 
-    const handleContentChange = (key: string, value: string) => {
-        if (updatedBookData) {
-            if (key === 'title') {
-                setUpdatedBookData({
-                    ...updatedBookData,
-                    label_basic: { ...updatedBookData.label_basic, title: value }
-                });
-            } else {
-                const updatedLabelExtra = updatedBookData.label_extra?.map(item =>
-                    item.label_name === key ? { ...item, content: value } : item
-                );
-                setUpdatedBookData({ ...updatedBookData, label_extra: updatedLabelExtra });
-            }
-        }
-    };
-
     const handleOnChangeContent = (newDescription: string) => {
         if (updatedBookData) {
             setUpdatedBookData({
@@ -230,23 +255,6 @@ const LibraryBookUpdate: React.FC = observer(() => {
             });
         }
     }
-
-    const handleExtractedTextClick = (text: string) => {
-        if (focusedInput && updatedBookData) {
-            let currentValue = '';
-            if (focusedInput === 'title') {
-                currentValue = updatedBookData.label_basic.title;
-            } else {
-                const extraLabel = updatedBookData.label_extra?.find(item => item.label_name === focusedInput);
-                if (extraLabel) {
-                    currentValue = extraLabel.content;
-                }
-            }
-            
-            const newValue = currentValue.length > 0 ? `${currentValue} ${text}` : text;
-            handleContentChange(focusedInput, newValue);
-        }
-    };
 
     const hasFloatingArea = extractedText.length > 0;
     
@@ -293,7 +301,8 @@ const LibraryBookUpdate: React.FC = observer(() => {
                     ))}
                     <TextArea 
                         value={updatedBookData?.label_basic.description || ''} 
-                        onChange={(e) => handleOnChangeContent(e.target.value)}
+                        onChange={(e) => handleContentChange('description', e.target.value)}
+                        onFocus={() => handleInputFocus('description')}
                     />
                     <Button onClick={handleUpdate}>완료</Button>
                 </Container>
