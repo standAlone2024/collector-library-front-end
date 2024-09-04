@@ -1,13 +1,15 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import { BasicContainer, BasicInput } from '@view/atoms';
-import { fetchBook, IBookDeatil } from '@api/BookApi'
+import { fetchBook, IBookDeatil, updateBook } from '@api/BookApi'
+import { uploadImage } from '@api/ImageApi';
 import { observer } from 'mobx-react-lite';
 import { authStore, bookStore } from '@store';
 import Router, { useRouter } from 'next/router';
 import { useError } from '@view/etc';
-import { S3_PATH } from '@util/constans';
+import { S3_PATH, PATH_BOOK } from '@util/constans';
 import { printLog, swapOriginal } from '@/utils/Utils';
+import AlertModal from '@/views/etc/modals/AlertModal';
 
 interface ContainerProps {
     $hasFloatingArea: boolean;
@@ -137,7 +139,29 @@ const ButtonContainer = styled.div`
   gap: 10px;
 `;
 
-const LibraryBookUpdate: React.FC = observer(() => {
+const FileInput = styled.input`
+  display: none;
+`;
+
+export const ImageComponent = React.memo(function ImageComponent({ src }: { src: string }) {
+    return (
+        <>
+          <BackgroundImage src={src} />
+          <StyledImage src={src} alt="Book" />
+        </>
+    );
+});
+
+export const NoImageComponent = React.memo(function NoImageComponent() {
+    return (
+        <>
+          <BackgroundImage src='/icons/no_photography.png' />
+          <StyledImage src='/icons/no_photography.png' alt="Book" />
+        </>
+    );
+});
+
+export const LibraryBookUpdate: React.FC = observer(() => {
     const router = useRouter();
     const { setErrorState } = useError();
     const [bookData, setBookData] = useState<IBookDeatil | null>(null);
@@ -145,10 +169,56 @@ const LibraryBookUpdate: React.FC = observer(() => {
     const [isLoading, setIsLoading] = useState(true);
     const [extractedText, setExtractedText] = useState<string[]>([]);
     const [focusedInput, setFocusedInput] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [selectedImage, setSelectedImage] = useState<{ file: File, preview: string } | null>(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [bookId, setBookId] = useState(0);
 
-    const handleUpdate = () => {
-        printLog(updatedBookData);
-        alert('update api call');
+    const handleConfirm = () => {
+        Router.push(`/section/book/read?bookId=${bookId}`);
+        setIsModalVisible(false);
+    }
+
+    const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setSelectedImage({
+              file,
+              preview: reader.result as string
+            });
+          };
+          reader.readAsDataURL(file);
+        }
+    }, []);
+
+    const handleUpdate = async() => {
+        // printLog(updatedBookData);
+        // alert('update api call');
+        setIsLoading(true);
+        try{
+            if(updatedBookData)
+            {
+                if(selectedImage && authStore.user?.id){
+                    // 이미지 업로드 및 처리
+                    const imageResult = await uploadImage(selectedImage.file, authStore.user.id, PATH_BOOK);
+                    if(imageResult){
+                        updatedBookData.book_thumb_path = imageResult.thumbnail_path;
+                    }
+                }
+                await updateBook(updatedBookData);
+                setIsModalVisible(true);
+            }
+        }catch(err) {
+            if(err instanceof Error)
+                setErrorState(err, "데이터 수정 실패");
+            else
+                setErrorState(new Error('An unknown error occurred'));
+            router.push(`/section/book/read?bookId=${bookId}`);
+        }finally{
+            setIsLoading(false);
+        }
     }
     
     const handleImageDelete = () => {
@@ -156,7 +226,7 @@ const LibraryBookUpdate: React.FC = observer(() => {
     }
     
     const handleImageChange = () => {
-        alert('change image api call');
+        fileInputRef.current?.click();
     }
 
     const handleInputFocus = (inputName: string) => {
@@ -203,6 +273,14 @@ const LibraryBookUpdate: React.FC = observer(() => {
         }
     };
 
+    // useEffect(() => {
+    //     return () => {
+    //       if (selectedImage?.preview) {
+    //         URL.revokeObjectURL(selectedImage.preview);
+    //       }
+    //     };
+    // }, [selectedImage]);
+
     useEffect(() => {
         const initAllDate = async () => {
             if (!router.isReady) return;
@@ -214,6 +292,8 @@ const LibraryBookUpdate: React.FC = observer(() => {
                 router.push('/section/list');
                 return;
             }
+
+            setBookId(Number(bookId));
 
             try{
                 if(authStore.isLoading)
@@ -245,18 +325,21 @@ const LibraryBookUpdate: React.FC = observer(() => {
 
     let originPath = '';
     if(bookData?.book_thumb_path)
+    {
         originPath = swapOriginal(bookData?.book_thumb_path);
-
-    const handleOnChangeContent = (newDescription: string) => {
-        if (updatedBookData) {
-            setUpdatedBookData({
-              ...updatedBookData,
-              label_basic: { ...updatedBookData.label_basic, description: newDescription }
-            });
-        }
     }
 
+    const imageSrc = useMemo(() => {
+        if (selectedImage?.preview) {
+            return selectedImage.preview;
+        } else if (originPath) {
+            return S3_PATH + originPath;
+        }
+        return '';
+    }, [selectedImage, originPath]);
+
     const hasFloatingArea = extractedText.length > 0;
+    
     
     if(isLoading || !bookData)
         return (<BasicContainer isAlignCenter={true}><p>Loading book info...</p></BasicContainer>);
@@ -265,19 +348,16 @@ const LibraryBookUpdate: React.FC = observer(() => {
             <BasicContainer>
                 <Container $hasFloatingArea={hasFloatingArea}>
                     <ImageContainer>
-                        {originPath.length > 0 ? (
-                            <>
-                                <BackgroundImage src={S3_PATH + (originPath)} />
-                                <StyledImage src={S3_PATH + (originPath)} alt="Book" />
-                            </>
-                        ) : (
-                            <>
-                                <BackgroundImage src='/icons/no_photography.png' />
-                                <StyledImage src='/icons/no_photography.png' alt="Book" />
-                            </>
-                        )}
+                        {imageSrc ? <ImageComponent src={imageSrc} /> : <NoImageComponent />}
                     </ImageContainer>
                     <ButtonContainer>
+                        <FileInput
+                            key={selectedImage ? selectedImage.preview : "fileInputKey"}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            ref={fileInputRef}
+                        />
                         <Button onClick={handleImageChange}>이미지 변경</Button>
                         <Button onClick={handleImageDelete}>삭제</Button>
                     </ButtonContainer>
@@ -306,20 +386,26 @@ const LibraryBookUpdate: React.FC = observer(() => {
                     />
                     <Button onClick={handleUpdate}>완료</Button>
                 </Container>
-            {extractedText.length > 0 && (
-                <FloatingArea>
-                    <h4>추출된 텍스트:</h4>
-                    <ExtractedTextGrid>
-                        {extractedText.map((text, index) => (
-                            <ExtractedTextButton 
-                                key={index}
-                                onClick={() => handleExtractedTextClick(text)} >
-                                {text}
-                            </ExtractedTextButton>
-                        ))}
-                    </ExtractedTextGrid>
-                </FloatingArea>
-            )}
+                {extractedText.length > 0 && (
+                    <FloatingArea>
+                        <h4>추출된 텍스트:</h4>
+                        <ExtractedTextGrid>
+                            {extractedText.map((text, index) => (
+                                <ExtractedTextButton 
+                                    key={index}
+                                    onClick={() => handleExtractedTextClick(text)} >
+                                    {text}
+                                </ExtractedTextButton>
+                            ))}
+                        </ExtractedTextGrid>
+                    </FloatingArea>
+                )}
+                <AlertModal 
+                    isVisible={isModalVisible}
+                    title='데이터 수정'
+                    message='데이터 수정이 완료되었습니다.'
+                    onConfirm={handleConfirm}
+                />
         </BasicContainer>
     )
 });

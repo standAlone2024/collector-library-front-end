@@ -161,6 +161,7 @@ export const ImageUpdateDeleteModal: React.FC<ImageUpdateDeleteProps> = ({
         <h2>{title}</h2>
         <Button onClick={handleButtonClick}>이미지 선택</Button>
         <FileInput
+          key={selectedImage ? selectedImage.preview : "fileInputKey"}
           type="file"
           accept="image/*"
           onChange={handleFileChange}

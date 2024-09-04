@@ -92,13 +92,13 @@ export const deleteBook = async(selectedId: number) => {
     }
 }
 
-export const updateBook = async(book: IBook) =>{
+export const updateBook = async(book: IBookDeatil) =>{
     if(!book) return;
 
     bookStore.setLoading(true);
     printLog(book);
     try{
-        const response = await HttpRequests.getInstance().put<{book: IBook}>(`/book/${book.id}`, book);
+        const response = await HttpRequests.getInstance().put<{book: IBookObject}>(`/book/${book.id}`, book);
         if(response.book)
             bookStore.updateBook(response.book)
     }catch(err) {
