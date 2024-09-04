@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { authStore, sectionStore } from '@store';
 import { uploadImage } from '@api/ImageApi';
 import { S3_PATH, PATH_BOOK } from '@util/constans';
-import { fetchSection, ISectionNLabel } from '@api/SectionApi';
+import { fetchSection, updateSection, ISectionNLabel } from '@api/SectionApi';
 import { createLabel, deleteLabel, ISectionOptLabel } from '@api/LabelApi';
 import Router, { useRouter } from 'next/router';
 import { useError } from '@view/etc';
@@ -216,13 +216,28 @@ const SectionUpdate: React.FC = observer(() => {
 
     const handleUpdate = async() => {
         printLog(updatedSectionData);
+
+        if(updatedSectionData)
+        {
+            setIsLoading(true);
+            try{
+                await updateSection(updatedSectionData);
+            }catch(err) {
+                if(err instanceof Error)
+                    setErrorState(err, "Section 수정 실패");
+                else
+                    setErrorState(new Error('An unknown error occurred'));
+            }finally {
+                setIsLoading(false);
+            }
+        }
     }
 
     const handleAddLabel = async(input: string) => {
         printLog('input: ' + input);
-        setIsLoading(true);
         if(sectionData?.id)
         {
+            setIsLoading(true);
             const label: ISectionOptLabel = {
                 section_id: sectionData.id,
                 label_name: input,
@@ -330,7 +345,7 @@ const SectionUpdate: React.FC = observer(() => {
             ))}
             <ButtonContainer>
                 <Button onClick={handleShowModal}>Label 추가</Button>
-                <Button onClick={handleUpdate}>수정 완료</Button>
+                <Button onClick={handleUpdate}>수정</Button>
             </ButtonContainer>
             <InputModal 
                 isVisible={isAddModalShow}

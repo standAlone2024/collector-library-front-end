@@ -65,15 +65,18 @@ export const createSection = async(section : ISection) => {
     }
 }
 
-export const updateSection = async(section: ISection) => {
+export const updateSection = async(section: ISectionNLabel) => {
     if(!section)
         return;
     // printLog(section);
     sectionStore.setLoading(true);
     try{
-        const response = await HttpRequests.getInstance().put<{section: ISection}>(`/section/${section.id}`, section);
+        const response = await HttpRequests.getInstance().put<{section: ISectionNLabel}>(`/section/${section.id}`, section);
         if(response.section)
+        {
             sectionStore.updateSection(response.section);
+            sectionStore.setSectionNLabel(response.section);
+        }
     }catch(error){
         throw error;
     }finally{
