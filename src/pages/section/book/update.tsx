@@ -9,7 +9,7 @@ import Router, { useRouter } from 'next/router';
 import { useError } from '@view/etc';
 import { S3_PATH, PATH_BOOK } from '@util/constans';
 import { printLog, swapOriginal } from '@/utils/Utils';
-import AlertModal from '@/views/etc/modals/AlertModal';
+import AlertModal from '@view/etc/modals/AlertModal';
 
 interface ContainerProps {
     $hasFloatingArea: boolean;
