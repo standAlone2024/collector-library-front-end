@@ -179,19 +179,33 @@ export const LibraryBookUpdate: React.FC = observer(() => {
         setIsModalVisible(false);
     }
 
-    const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = useCallback(async(event: React.ChangeEvent<HTMLInputElement>, userId: number | undefined) => {
         const file = event.target.files?.[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setSelectedImage({
-              file,
-              preview: reader.result as string
-            });
-          };
-          reader.readAsDataURL(file);
+        if (file && userId) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setSelectedImage({
+                file,
+                preview: reader.result as string
+                });
+            };
+            reader.readAsDataURL(file);
+            //TODO localStorage에서 extract_text를 재사용 하는 부분을 이쪽에 구현해야 함
+            //BasicBook의 handleFileChange를 참고
+            const imageResult = await uploadImage(file, userId, PATH_BOOK);
+            if(imageResult){
+                printLog('thumbnail_path: ' + imageResult.thumbnail_path);
+                if(updatedBookData)
+                {
+                    setUpdatedBookData({
+                        ...updatedBookData,
+                        book_thumb_path: imageResult.thumbnail_path
+                    });
+                }
+                setExtractedText(imageResult.extracted_text ?? []);
+            }
         }
-    }, []);
+    }, [updatedBookData]);
 
     const handleUpdate = async() => {
         // printLog(updatedBookData);
@@ -200,13 +214,13 @@ export const LibraryBookUpdate: React.FC = observer(() => {
         try{
             if(updatedBookData)
             {
-                if(selectedImage && authStore.user?.id){
-                    // 이미지 업로드 및 처리
-                    const imageResult = await uploadImage(selectedImage.file, authStore.user.id, PATH_BOOK);
-                    if(imageResult){
-                        updatedBookData.book_thumb_path = imageResult.thumbnail_path;
-                    }
-                }
+                // if(selectedImage && authStore.user?.id){
+                //     // 이미지 업로드 및 처리
+                //     const imageResult = await uploadImage(selectedImage.file, authStore.user.id, PATH_BOOK);
+                //     if(imageResult){
+                //         updatedBookData.book_thumb_path = imageResult.thumbnail_path;
+                //     }
+                // }
                 await updateBook(updatedBookData);
                 setIsModalVisible(true);
             }
@@ -355,7 +369,7 @@ export const LibraryBookUpdate: React.FC = observer(() => {
                             key={selectedImage ? selectedImage.preview : "fileInputKey"}
                             type="file"
                             accept="image/*"
-                            onChange={handleFileChange}
+                            onChange={(e) => handleFileChange(e, authStore.user?.id)}
                             ref={fileInputRef}
                         />
                         <Button onClick={handleImageChange}>이미지 변경</Button>
