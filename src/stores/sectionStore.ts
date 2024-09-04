@@ -1,8 +1,9 @@
 import { makeAutoObservable, runInAction, action } from 'mobx';
-import { ISection } from '@api/SectionApi';
+import { ISection, ISectionNLabel } from '@api/SectionApi';
 
 class SectionStore {
   sections: ISection[] = [];
+  sectionNLabel: ISectionNLabel | null = null;
   loading: boolean = false;
 
   constructor() {
@@ -12,6 +13,7 @@ class SectionStore {
   clear() {
     runInAction(() => {
       this.sections = [];
+      this.sectionNLabel = null;
     });
   }
 
@@ -23,6 +25,16 @@ class SectionStore {
     runInAction(() => {
       this.sections = sections;
     });
+  }
+
+  setSectionNLabel(sectionNlabel: ISectionNLabel) {
+    runInAction(()=> {
+      this.sectionNLabel = sectionNlabel;
+    })
+  }
+
+  getSectionNLabel() {
+    return this.sectionNLabel;
   }
 
   getSections(){

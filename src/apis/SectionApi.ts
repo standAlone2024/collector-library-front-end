@@ -2,6 +2,7 @@ import axios from 'axios';
 import { printLog } from '@util/Utils';
 import HttpRequests from '@util/HttpRequests';
 import { sectionStore } from '@store';
+import { ISectionOptLabel } from './LabelApi';
 
 export const fetchSectionList = async(userId: number | undefined) => {
     if(!userId)
@@ -25,6 +26,24 @@ export const fetchSectionList = async(userId: number | undefined) => {
         }
     }
     finally{
+        sectionStore.setLoading(false);
+    }
+}
+
+export const fetchSection = async(sectionId: number | undefined) => {
+    if(!sectionId) return;
+
+    sectionStore.setLoading(true);
+    try{
+        const response = await HttpRequests.getInstance().get<{section: ISectionNLabel}>(`/section?id=${sectionId}`)
+        if(response.section)
+        {
+            printLog(response.section);
+            sectionStore.setSectionNLabel(response.section);
+        }
+    }catch(err) {
+        throw err;
+    }finally{
         sectionStore.setLoading(false);
     }
 }
@@ -98,6 +117,10 @@ export interface ISection {
     sec_thumb_path?: string;
     created_date?: Date;
     updated_date?: Date;
+}
+
+export interface ISectionNLabel extends ISection {
+    label_extra: ISectionOptLabel[];
 }
 
 export type SearchResult = {
