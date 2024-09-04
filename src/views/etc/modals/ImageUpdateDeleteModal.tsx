@@ -187,7 +187,7 @@ export const ImageUpdateDeleteModal: React.FC<ImageUpdateDeleteProps> = ({
         />
         <ButtonContainer>
           <Button onClick={handleCancel}>취소</Button>
-          <Button onClick={() => handleUpdate(section)}>변경</Button>
+          <Button onClick={() => handleUpdate(section)}>수정</Button>
         </ButtonContainer>
         <Button onClick={() => handleDelete(section?.id)}>삭제</Button>
       </ModalContent>
