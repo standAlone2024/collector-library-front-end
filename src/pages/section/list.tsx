@@ -8,6 +8,7 @@ import { ThumbListComponent } from '@view/compoments';
 import { ImageSelectorModal, ImageUpdateDeleteModal, ConfirmModal, useError } from '@view/etc';
 import { printLog } from '@util/Utils';
 import { ISection } from '@api/SectionApi';
+import Router from 'next/router';
 
 const Container = styled.div`
   position: absolute;
@@ -59,9 +60,10 @@ const List: React.FC = observer(() => {
   };
 
   const handleUpdate = async(section: ISection) => {
-    setIsUDModalVisible(false);
-    setSelectedSection(section);
-    setIsUConfirmModalVisible(true);
+    // setIsUDModalVisible(false);
+    // setSelectedSection(section);
+    // setIsUConfirmModalVisible(true);
+    Router.push(`/section/update?sectionId=${section.id}`);
   }
 
   const handleCreateConfirm = async() => {

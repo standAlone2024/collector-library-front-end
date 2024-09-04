@@ -99,19 +99,7 @@ const LibraryBooks: React.FC = observer(() => {
     }
 
     const doUpdate = async(selectedBookId: number) => {
-        alert('경로 이동');
-        // const book = bookStore.getBook(selectedBookId);
-        // if(book){
-        //     try{
-        //         await updateBook(book);
-        //     }catch (err) {
-        //         if (err instanceof Error) {
-        //             setErrorState(err, `${book.title} 수정 중 오류가 발생했습니다.`);
-        //         } else {
-        //             setErrorState(new Error('An unknown error occurred'));
-        //         }
-        //     }
-        // }
+        Router.push(`/section/book/update?bookId=${selectedBookId}`);
     }
 
     const doDelete = async(selectedBookId: number) => {
