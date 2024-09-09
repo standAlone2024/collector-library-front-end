@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { BasicButton, BasicContainer, BasicThumbnailProps } from '@view/atoms';
 import { ThumbListComponent, SearchComponent } from '@view/compoments';
 import { observer } from 'mobx-react-lite';
-import styled from 'styled-components';
 import Router, { useRouter } from 'next/router';
-import { searchBooks, fetchBookList, deleteBook, updateBook } from '@api/BookApi';
+import { searchBooks, fetchBookList, deleteBook } from '@api/BookApi';
 import { authStore, bookStore } from '@store';
 import { ConfirmModal, UpdateDeleteModal, useError } from '@view/etc';
 

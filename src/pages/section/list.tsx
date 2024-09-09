@@ -1,29 +1,13 @@
 import React, { Suspense, useState, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
 import { authStore, sectionStore } from '@store';
-import styled from 'styled-components';
 import { fetchSectionList, deleteSection, updateSection, createSection, ISectionNLabel } from '@api/SectionApi';
-import { BasicThumbnailProps, BasicButton } from '@view/atoms';
+import { BasicThumbnailProps, BasicButton, BasicContainer } from '@view/atoms';
 import { ThumbListComponent } from '@view/compoments';
 import { ImageSelectorModal, ImageUpdateDeleteModal, ConfirmModal, useError } from '@view/etc';
 import { printLog } from '@util/Utils';
 import { ISection } from '@api/SectionApi';
 import Router from 'next/router';
-
-const Container = styled.div`
-  position: absolute;
-  top: 55px; // Top 영역의 높이만큼 내림
-  left: 0;
-  right: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-top: 1rem; // Top 영역과의 여백 확보
-  margin: 0.5rem;
-  overflow: auto;
-  // background-color: red;
-`;
 
 const List: React.FC = observer(() => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -152,10 +136,13 @@ const List: React.FC = observer(() => {
   }));
 
   return (
-    <Container>
+    <BasicContainer>
       {authStore.user ? (
         <>
-          <p>Welcome, {authStore.user.email}</p>
+          <BasicButton 
+            background_color={'green'} 
+            label={'Library 추가'} 
+            onClick={handleOpenModal} />
           {sectionStore.loading ? (
             <p>Loading sections...</p>
           ) : (
@@ -217,14 +204,13 @@ const List: React.FC = observer(() => {
                   />
                 </>
               }
-              <BasicButton background_color={'green'} label={'Library 추가'} onClick={handleOpenModal} />
             </>
           )}
         </>
       ) : (
         <p>Loading...</p>
       )}
-    </Container>
+    </BasicContainer>
   );
 });
 

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 const MiddleContainerAlignCenter = styled.div`
   position: absolute;
+  margin: 1rem;
   top: 8vh; // Top 영역의 높이만큼 위에서 떨어짐
   left: 0;
   right: 0;
@@ -18,6 +19,7 @@ const MiddleContainerAlignCenter = styled.div`
 
 const MiddleContainer = styled.div`
   position: absolute;
+  margin: 1rem;
   top: 8vh; // Top 영역의 높이만큼 위에서 떨어짐
   left: 0;
   right: 0;

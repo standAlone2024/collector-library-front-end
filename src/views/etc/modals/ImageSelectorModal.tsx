@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useRef } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { uploadImage } from '@api/ImageApi';
 import { PATH_SECTION } from '@util/constans';
-import { printLog } from '@util/Utils';
+import { FiUpload, FiX } from 'react-icons/fi';
 
 interface ImageSelectorModalProps {
   isVisible: boolean;
@@ -20,38 +20,59 @@ const ModalOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 `;
 
 const ModalContent = styled.div`
-  background-color: white;
-  padding: 20px;
+  background-color: ${props => props.theme.colors.background};
+  padding: 2rem;
   border-radius: 8px;
-  width: 30%;
-  max-width: 80%;
-  max-height: 80%;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
   overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
-const ThumbnailGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 10px;
-  margin-top: 20px;
+const ModalTitle = styled.h2`
+  font-family: ${props => props.theme.fonts.heading};
+  color: ${props => props.theme.colors.primary};
+  margin-bottom: 1.5rem;
+  text-align: center;
+`;
+
+const ThumbnailContainer = styled.div`
+  width: 200px;
+  height: 200px;
+  margin: 1.5rem auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0; // 배경색 추가
+  border-radius: 8px;
 `;
 
 const Thumbnail = styled.div<{ selected: boolean }>`
   width: 100%;
-  height: 100px;
-  background-size: cover;
+  height: 100%;
+  background-size: contain;
   background-position: center;
+  background-repeat: no-repeat;
   cursor: pointer;
-  border: 2px solid ${props => props.selected ? '#007bff' : 'transparent'};
+  border: 2px solid ${props => props.selected ? props.theme.colors.accent : 'transparent'};
+  border-radius: 8px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
   &:hover {
-    border-color: #007bff;
+    border-color: ${props => props.theme.colors.accent};
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -59,31 +80,60 @@ const FileInput = styled.input`
   display: none;
 `;
 
-const Button = styled.button`
-  padding: 10px 15px;
-  margin: 0 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
+const InputField = styled.input`
+  width: 90%;
+  padding: 0.75rem;
+  margin: 1.5rem 0;
+  border: 1px solid ${props => props.theme.colors.secondary};
   border-radius: 4px;
-  cursor: pointer;
-  &:hover {
-    background-color: #0056b3;
+  font-family: ${props => props.theme.fonts.body};
+  font-size: 1rem;
+  &:focus {
+    outline: none;
+    border-color: ${props => props.theme.colors.primary};
   }
 `;
 
-const InputField = styled.input`
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  border: 1px solid #ccc;
+const buttonStyles = css`
+  padding: 0.75rem 1rem;
+  background-color: ${props => props.theme.colors.primary};
+  color: ${props => props.theme.colors.background};
+  border: none;
   border-radius: 4px;
+  cursor: pointer;
+  font-family: ${props => props.theme.fonts.body};
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: ${props => props.theme.colors.accent};
+  }
+  svg {
+    margin-right: 0.5rem;
+  }
+`;
+
+const ImageUploadButton = styled.button`
+  ${buttonStyles}
+  align-self: center;
+  margin-bottom: 1.5rem;
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
+  justify-content: space-between;
+  margin-top: 1rem;
+  width: 95%;
+  gap: 0.5rem;
+`;
+
+const ActionButton = styled.button`
+  ${buttonStyles}
+  flex: 1; 
+  align-self: center;
+  margin-bottom: 1.5rem;
 `;
 
 export const ImageSelectorModal: React.FC<ImageSelectorModalProps> = ({ 
@@ -112,24 +162,23 @@ export const ImageSelectorModal: React.FC<ImageSelectorModalProps> = ({
   const handleConfirm = async () => {
     try {
       if (!inputValue) {
-        throw new Error("Section 이름은 필수값입니다.");
+        throw new Error("섹션 이름은 필수값입니다.");
       }
 
       let thumbnailPath = '';
       if (userId) {
-      // 이미지 업로드 및 처리
-        if (selectedImage?.file)
-        {
+        if (selectedImage?.file) {
           const imageResult = await uploadImage(selectedImage.file, userId, PATH_SECTION);
-          if(imageResult)
+          if (imageResult) {
             thumbnailPath = imageResult.thumbnail_path;
-          else
+          } else {
             throw new Error("이미지 업로드 실패");
+          }
         }
         onConfirm(thumbnailPath, inputValue, userId, (sectionCount+1));
       }
     } catch (error) {
-      console.error("Section 생성 중 Error가 발생했습니다:", error);
+      console.error("섹션 생성 중 오류가 발생했습니다:", error);
     }
   };
 
@@ -147,8 +196,11 @@ export const ImageSelectorModal: React.FC<ImageSelectorModalProps> = ({
   return (
     <ModalOverlay onClick={handleCancel}>
       <ModalContent onClick={e => e.stopPropagation()}>
-        <h2>{title}</h2>
-        <Button onClick={handleButtonClick}>이미지 선택</Button>
+        <ModalTitle>{title}</ModalTitle>
+        <ImageUploadButton onClick={handleButtonClick}>
+          <FiUpload />
+          이미지 선택
+        </ImageUploadButton>
         <FileInput
           type="file"
           accept="image/*"
@@ -156,22 +208,22 @@ export const ImageSelectorModal: React.FC<ImageSelectorModalProps> = ({
           ref={fileInputRef}
         />
         {selectedImage && (
-          <ThumbnailGrid>
+          <ThumbnailContainer>
             <Thumbnail
               style={{ backgroundImage: `url(${selectedImage.preview})` }}
               selected={true}
             />
-          </ThumbnailGrid>
+          </ThumbnailContainer>
         )}
         <InputField
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Section의 이름을 입력하세요"
+          placeholder="섹션의 이름을 입력하세요"
         />
         <ButtonContainer>
-          <Button onClick={handleCancel}>취소</Button>
-          <Button onClick={handleConfirm}>확인</Button>
+          <ActionButton onClick={handleCancel}><FiX />취소</ActionButton>
+          <ActionButton onClick={handleConfirm}>확인</ActionButton>
         </ButtonContainer>
       </ModalContent>
     </ModalOverlay>
