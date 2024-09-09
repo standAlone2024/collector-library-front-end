@@ -241,7 +241,7 @@ const SectionUpdate: React.FC = observer(() => {
             const label: ISectionOptLabel = {
                 section_id: sectionData.id,
                 label_name: input,
-                order: (sectionData?.label_extra.length) ? (sectionData?.label_extra.length + 1) : 1
+                order: (sectionData.label_extra?.length) ? (sectionData.label_extra?.length + 1) : 1
             };
             try{
                 await createLabel(label);

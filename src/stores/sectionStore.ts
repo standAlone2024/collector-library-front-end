@@ -49,8 +49,13 @@ class SectionStore {
   }
 
   addLabel(label: ISectionOptLabel) {
-    runInAction(()=> {
-       this.sectionNLabel?.label_extra.push(label);
+    runInAction(() => {
+      if (this.sectionNLabel) {
+        if (!this.sectionNLabel.label_extra) {
+          this.sectionNLabel.label_extra = [];
+        }
+        this.sectionNLabel.label_extra.push(label);
+      }
     });
   }
 

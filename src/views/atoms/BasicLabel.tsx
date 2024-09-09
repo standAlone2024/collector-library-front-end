@@ -5,14 +5,14 @@ import { BASIC_FONT_SIZE } from '@util/constans';
 export interface BasicLabelProps {
   description: string;
   font_size?: number;
-  font_color?: string;
+  font_color?: string | ((props: any) => string);
 }
 
 const StyledLabel = styled.p<{
-  $font_color?: string;
+  $font_color?: string | ((props: any) => string);
   $font_size?: number;
 }>`
-  color: ${props => props.$font_color || 'black'};
+  color: ${props => typeof props.$font_color === 'function' ? props.$font_color(props) : props.$font_color || 'black'};
   font-size: ${props => props.$font_size || BASIC_FONT_SIZE}px;
 `;
 

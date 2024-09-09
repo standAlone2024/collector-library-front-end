@@ -123,7 +123,7 @@ export interface ISection {
 }
 
 export interface ISectionNLabel extends ISection {
-    label_extra: ISectionOptLabel[];
+    label_extra?: ISectionOptLabel[];
 }
 
 export type SearchResult = {

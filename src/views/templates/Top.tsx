@@ -1,44 +1,56 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
-import BasicLabel from '@view/atoms/BasicLabel';
 import { observer } from 'mobx-react-lite';
 import { StoreContext } from '@page/_app';
-import { printLog } from '@util/Utils';
 import Router, { useRouter } from 'next/router';
+import { FiLogIn, FiLogOut, FiBook } from 'react-icons/fi';
 
-const TopContainer = styled.div`
+const TopContainer = styled.header`
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 50px; 
-  background-color: #ccc;
-  padding: 0.5rem;
+  height: ${props => props.theme.sizes.headerHeight};
+  background-color: ${props => props.theme.colors.primary};
+  color: ${props => props.theme.colors.background};
+  padding: 0 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 `;
 
-const ChildContainer = styled.div`
+const Logo = styled.h1`
+  font-family: ${props => props.theme.fonts.heading};
+  font-size: 1.5rem;
+  margin: 0;
+`;
+
+const NavButton = styled.button`
+  background: none;
+  border: none;
+  color: ${props => props.theme.colors.background};
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 12px;
-`;
+  font-size: 0.8rem;
+  padding: 0.5rem;
+  transition: opacity 0.3s ease;
 
-const Icon = styled.img`
-  width: 32px;
-  height: 32px;
+  &:hover {
+    opacity: 0.8;
+  }
+
+  svg {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
 `;
 
 export const Top: React.FC = observer(() => {
   const { authStore } = useContext(StoreContext);
   const router = useRouter();
-
-  useEffect(() => {
-    // printLog('isAuthenticated: ' + authStore.isAuthenticated);
-    // printLog('isLoading: ' + authStore.isLoading);
-  }, [authStore.isAuthenticated, authStore.isLoading]);
 
   const handleButtonClick = () => {
     authStore.logout();
@@ -48,60 +60,22 @@ export const Top: React.FC = observer(() => {
     Router.push(path);
   };
 
-  if ((router.pathname !== '/' && !(router.pathname.startsWith('/user'))) && authStore.isLoading) {
-    return (
-      <TopContainer>
-        <BasicLabel description="Loading..." />
-      </TopContainer>
-    );
-  }
-
   return (
     <TopContainer>
-      <BasicLabel description="여기가 화면 이름" />
-      <ChildContainer>
-        {authStore.isAuthenticated ? (
-          <button
-            onClick={handleButtonClick}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              padding: '5px',
-            }}
-          >
-            {!(router.pathname.startsWith('/user')) && 
-              <>
-                <Icon src={'/icons/logout.png'} alt="icon" />
-                <span>logout</span>
-              </>
-            }
-          </button>
-        ) : (
-          <button
-            onClick={() => handleMove('/user/login')}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              padding: '5px',
-            }}
-          >
-            {!(router.pathname.startsWith('/user')) && 
-              <>
-                <Icon src={'/icons/login.png'} alt="icon" />
-                <span>login</span>
-              </>
-            }
-          </button>
-        )}
-      </ChildContainer>
+      <Logo>Collector Library</Logo>
+      {authStore.isAuthenticated ? (
+        <NavButton onClick={handleButtonClick}>
+          <FiLogOut />
+          <span>Logout</span>
+        </NavButton>
+      ) : (
+        !router.pathname.startsWith('/user') && (
+          <NavButton onClick={() => handleMove('/user/login')}>
+            <FiLogIn />
+            <span>Login</span>
+          </NavButton>
+        )
+      )}
     </TopContainer>
   );
 });

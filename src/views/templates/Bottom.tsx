@@ -1,42 +1,46 @@
 import React from 'react';
 import styled from 'styled-components';
+import { FiInfo, FiMapPin, FiMessageSquare } from 'react-icons/fi';
 
-const BottomContainer = styled.div`
+const BottomContainer = styled.footer`
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 3vh; // 전체 화면 높이의 10% 사용
-  background-color: #ccc;
-  padding: 1rem;
+  height: ${props => props.theme.sizes.footerHeight};
+  background-color: ${props => props.theme.colors.primary};
+  color: ${props => props.theme.colors.background};
   display: flex;
-  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 1rem;
+  font-size: 0.8rem;
 `;
 
-const FlexItem = styled.div`
-  flex: 1;
-  padding: 0.5rem;
-  text-align: center;
-`;
+const FooterItem = styled.div`
+  display: flex;
+  align-items: center;
 
-const Terms = styled(FlexItem)`
-  flex: 0 0 15%;
-`;
-
-const Address = styled(FlexItem)`
-  flex: 0 0 15%;
-`;
-
-const Ads = styled(FlexItem)`
-  flex: 1;
+  svg {
+    margin-right: 0.5rem;
+  }
 `;
 
 export const Bottom: React.FC = () => {
   return (
     <BottomContainer>
-      <Terms>약관</Terms>
-      <Ads>광고</Ads>
-      <Address>주소</Address>
+      <FooterItem>
+        <FiInfo />
+        <span>약관</span>
+      </FooterItem>
+      <FooterItem>
+        <FiMessageSquare />
+        <span>광고문의</span>
+      </FooterItem>
+      <FooterItem>
+        <FiMapPin />
+        <span>주소</span>
+      </FooterItem>
     </BottomContainer>
   );
 };

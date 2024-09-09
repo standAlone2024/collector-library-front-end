@@ -2,7 +2,7 @@ import React, { Suspense, useState, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
 import { authStore, sectionStore } from '@store';
 import styled from 'styled-components';
-import { fetchSectionList, deleteSection, updateSection, createSection } from '@api/SectionApi';
+import { fetchSectionList, deleteSection, updateSection, createSection, ISectionNLabel } from '@api/SectionApi';
 import { BasicThumbnailProps, BasicButton } from '@view/atoms';
 import { ThumbListComponent } from '@view/compoments';
 import { ImageSelectorModal, ImageUpdateDeleteModal, ConfirmModal, useError } from '@view/etc';
@@ -32,7 +32,7 @@ const List: React.FC = observer(() => {
   const [isUConfirmModalVisible, setIsUConfirmModalVisible] = useState(false);
   const [isDConfirmModalVisible, setIsDConfirmModalVisible] = useState(false);
   const [selectedSectionId, setSelectedSectionId] = useState<number | null>(null);
-  const [selectedSection, setSelectedSection] = useState<ISection | null>(null);
+  const [selectedSection, setSelectedSection] = useState<ISectionNLabel | null>(null);
   const { setErrorState } = useError();
 
   const handleOpenModal = () => setIsModalVisible(true);
