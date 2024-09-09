@@ -2,13 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 
 export interface BasicButtonProps<T = void> {
-  background_color: string | ((props: any) => string);
+  background_color?: string | ((props: any) => string);
   label: string;
   margin?: string;
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => T;
 }
 
-const StyledButton = styled.button<{ $background_color: string | ((props: any) => string), $margin?: string }>`
+const StyledButton = styled.button<{ $background_color?: string | ((props: any) => string), $margin?: string }>`
   display: flex;
   margin: ${props => props.$margin || '0px'};
   align-items: center;
@@ -20,8 +20,16 @@ const StyledButton = styled.button<{ $background_color: string | ((props: any) =
   border: 1px solid rgba(0, 0, 0, 0.1);
   cursor: pointer;
   font-size: 16px;
-  background-color: ${props => typeof props.$background_color === 'function' ? props.$background_color(props) : props.$background_color};
-  color: ${props => props.$background_color === '#FFFFFF' ? '#000000' : '#FFFFFF'};
+  background-color: ${props => {
+    if (typeof props.$background_color === 'function') {
+      return props.$background_color(props);
+    }
+    return props.$background_color || props.theme.colors.primary;
+  }};
+  color: ${props => {
+    const bgColor = typeof props.$background_color === 'function' ? props.$background_color(props) : (props.$background_color || props.theme.colors.primary);
+    return bgColor === '#FFFFFF' ? '#000000' : '#FFFFFF';
+  }};
   transition: opacity 0.3s ease;
 
   &:hover {

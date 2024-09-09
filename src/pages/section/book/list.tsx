@@ -6,6 +6,29 @@ import Router, { useRouter } from 'next/router';
 import { searchBooks, fetchBookList, deleteBook } from '@api/BookApi';
 import { authStore, bookStore } from '@store';
 import { ConfirmModal, UpdateDeleteModal, useError } from '@view/etc';
+import styled from 'styled-components';
+
+const StyledContainer = styled(BasicContainer)`
+  padding: 2rem;
+  background-color: ${props => props.theme.colors.background};
+`;
+
+const TopSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 2rem;
+`;
+
+const StyledButton = styled(BasicButton)`
+  width: 100%;
+`;
+
+const LoadingText = styled.p`
+  font-family: ${props => props.theme.fonts.body};
+  color: ${props => props.theme.colors.text};
+  text-align: center;
+`;
 
 const LibraryBooks: React.FC = observer(() => {
     const router = useRouter();
@@ -59,7 +82,7 @@ const LibraryBooks: React.FC = observer(() => {
     };
 
     if (isLoading) {
-        return <BasicContainer><p>Loading...</p></BasicContainer>;
+        return <BasicContainer><LoadingText>Loading...</LoadingText></BasicContainer>;
     }
 
     const thumbnails: BasicThumbnailProps[] = bookStore.books.map(book => ({
@@ -119,14 +142,19 @@ const LibraryBooks: React.FC = observer(() => {
     }
 
     return (
-        <BasicContainer>
-            <SearchComponent 
-                handleSearch={handleSearch}
-                move_path='/section/book/read'
-                condition={Number(router.query.sectionId as string)}
-            />
+        <StyledContainer>
+            <TopSection>
+                <StyledButton 
+                    label={'Book 추가'} 
+                    onClick={handleMove}
+                />
+                <SearchComponent 
+                    handleSearch={handleSearch}
+                    move_path='/section/book/read'
+                    condition={Number(router.query.sectionId as string)}
+                />
+            </TopSection>
             <ThumbListComponent thumbnails={thumbnails} />
-            <BasicButton background_color={'green'} label={'Book 추가'} onClick={handleMove} />
             {selectedBookId !== null &&
                 <>
                     <UpdateDeleteModal
@@ -150,7 +178,7 @@ const LibraryBooks: React.FC = observer(() => {
                         onCancel={handleFinalCancel} />
                 </>
             }
-        </BasicContainer>
+        </StyledContainer>
     );
 });
 
