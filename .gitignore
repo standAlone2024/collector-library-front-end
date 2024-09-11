@@ -42,3 +42,12 @@ __pycache__/
 
 #vscode 세팅파일
 .vscode
+
+#architecture.svg
+architecture.svg
+new_architecture.svg
+temp.dot
+.dependency-cruiser.js
+
+#test files
+/test
